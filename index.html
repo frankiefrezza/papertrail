@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#090e1a">
+    <meta name="theme-color" id="metaThemeColor" content="#0c1017">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="PaperTrail">
+    <link rel="apple-touch-icon" sizes="180x180" href="appicon.png">
+    <link rel="icon" type="image/png" href="appicon.png">
+    <link rel="manifest" href="manifest.json">
 
     <title>PaperTrail — Expense & Spending Tracker</title>
 
@@ -15,31 +18,95 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 
+    <script>
+        // Apply saved theme immediately before first paint to prevent flash
+        (function() {
+            const savedTheme = localStorage.getItem('papertrail_theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            const meta = document.getElementById('metaThemeColor');
+            if (meta) meta.setAttribute('content', savedTheme === 'light' ? '#f7f8fa' : '#0c1017');
+        })();
+    </script>
+
     <style>
         :root {
-            --bg-app: #090e1a;
-            --bg-surface: #111827;
-            --bg-card: #151f32;
-            --bg-card-hover: #1b2740;
-            --bg-input: #0d1424;
-            --border: rgba(148, 163, 184, 0.14);
-            --border-strong: rgba(148, 163, 184, 0.25);
-            --text-main: #f8fafc;
+            --bg-app: #0c1017;
+            --bg-surface: #121722;
+            --bg-card: #171e2b;
+            --bg-card-hover: #1d2636;
+            --bg-input: #10151f;
+            --bg-hero: linear-gradient(165deg, #192231 0%, #131924 100%);
+            --bg-stat-box: rgba(12, 16, 23, 0.5);
+            --bg-subpanel: rgba(12, 16, 23, 0.4);
+            --bg-nav: rgba(14, 19, 28, 0.94);
+            --bg-sheet: #151c28;
+            --bg-backdrop: rgba(6, 9, 15, 0.76);
+            --bg-auth-overlay: #0a0e14;
+            --bg-auth-card: rgba(21, 28, 40, 0.94);
+            --border: rgba(148, 163, 184, 0.12);
+            --border-strong: rgba(148, 163, 184, 0.22);
+            --text-main: #f1f5f9;
             --text-secondary: #94a3b8;
             --text-muted: #64748b;
-            --mint: #34d399;
-            --emerald: #10b981;
-            --cyan: #06b6d4;
-            --blue: #3b82f6;
-            --danger: #f43f5e;
-            --warning: #f59e0b;
-            --brand-gradient: linear-gradient(135deg, #34d399 0%, #06b6d4 55%, #3b82f6 100%);
-            --glow-mint: 0 8px 28px rgba(16, 185, 129, 0.24);
-            --radius-lg: 20px;
-            --radius-md: 14px;
+            --text-banner: #cbd5e1;
+            --mint: #3aa182;
+            --emerald: #2e8b6e;
+            --cyan: #5b96b8;
+            --blue: #4c7da6;
+            --accent-soft: rgba(58, 161, 130, 0.11);
+            --accent-border: rgba(58, 161, 130, 0.26);
+            --icon-bg: rgba(91, 150, 184, 0.11);
+            --icon-border: rgba(91, 150, 184, 0.2);
+            --danger: #e05268;
+            --danger-text: #f28b9c;
+            --warning: #d99b38;
+            --brand-gradient: linear-gradient(135deg, #2e8b6e 0%, #377794 100%);
+            --glow-mint: 0 4px 16px rgba(46, 139, 110, 0.18);
+            --card-shadow: none;
+            --hero-shadow: 0 10px 28px rgba(0, 0, 0, 0.26);
+            --radius-lg: 18px;
+            --radius-md: 13px;
             --radius-sm: 10px;
             --safe-top: env(safe-area-inset-top, 0px);
             --safe-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        /* ==================== WHITE (LIGHT) THEME ==================== */
+        :root[data-theme="light"] {
+            --bg-app: #f5f7fa;
+            --bg-surface: #ffffff;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f3f5f8;
+            --bg-input: #f1f3f6;
+            --bg-hero: linear-gradient(165deg, #ffffff 0%, #f3f7f5 100%);
+            --bg-stat-box: #f7f8fa;
+            --bg-subpanel: #f7f8fa;
+            --bg-nav: rgba(255, 255, 255, 0.95);
+            --bg-sheet: #ffffff;
+            --bg-backdrop: rgba(15, 23, 42, 0.42);
+            --bg-auth-overlay: #f2f4f7;
+            --bg-auth-card: rgba(255, 255, 255, 0.98);
+            --border: rgba(15, 23, 42, 0.08);
+            --border-strong: rgba(15, 23, 42, 0.15);
+            --text-main: #111827;
+            --text-secondary: #4b5563;
+            --text-muted: #6b7280;
+            --text-banner: #1f2937;
+            --mint: #247a61;
+            --emerald: #1f6b54;
+            --cyan: #356c8c;
+            --blue: #2f5e80;
+            --accent-soft: rgba(36, 122, 97, 0.08);
+            --accent-border: rgba(36, 122, 97, 0.22);
+            --icon-bg: rgba(53, 108, 140, 0.08);
+            --icon-border: rgba(53, 108, 140, 0.16);
+            --danger: #c93b52;
+            --danger-text: #b52d43;
+            --warning: #b87c1e;
+            --brand-gradient: linear-gradient(135deg, #247a61 0%, #2d6680 100%);
+            --glow-mint: 0 4px 14px rgba(36, 122, 97, 0.16);
+            --card-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+            --hero-shadow: 0 6px 20px rgba(15, 23, 42, 0.05);
         }
 
         * {
@@ -52,29 +119,38 @@
         body {
             background-color: var(--bg-app);
             background-image:
-                radial-gradient(circle at 15% 0%, rgba(52, 211, 153, 0.08), transparent 38%),
-                radial-gradient(circle at 85% 10%, rgba(6, 182, 212, 0.08), transparent 40%);
+                radial-gradient(circle at 15% 0%, rgba(58, 161, 130, 0.045), transparent 42%),
+                radial-gradient(circle at 85% 10%, rgba(91, 150, 184, 0.045), transparent 44%);
             color: var(--text-main);
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             min-height: 100vh;
             padding-top: var(--safe-top);
             padding-bottom: calc(96px + var(--safe-bottom));
             -webkit-font-smoothing: antialiased;
+            transition: background-color 0.2s ease, color 0.2s ease;
         }
 
         body.locked {
             overflow: hidden;
         }
 
-        /* ==================== LOGIN / VAULT OVERLAY ==================== */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .spin-svg {
+            animation: spin 1s linear infinite;
+        }
+
+        /* ==================== LOGIN / CLOUD VAULT OVERLAY ==================== */
         .auth-overlay {
             position: fixed;
             inset: 0;
             z-index: 100;
-            background-color: #070b14;
+            background-color: var(--bg-auth-overlay);
             background-image:
-                radial-gradient(circle at 20% 12%, rgba(52, 211, 153, 0.14), transparent 42%),
-                radial-gradient(circle at 82% 85%, rgba(6, 182, 212, 0.14), transparent 45%);
+                radial-gradient(circle at 20% 12%, rgba(58, 161, 130, 0.08), transparent 44%),
+                radial-gradient(circle at 82% 85%, rgba(91, 150, 184, 0.08), transparent 46%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -91,28 +167,15 @@
 
         .auth-card {
             width: 100%;
-            max-width: 400px;
-            background: rgba(18, 27, 46, 0.9);
+            max-width: 410px;
+            background: var(--bg-auth-card);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(52, 211, 153, 0.24);
-            border-radius: 26px;
-            padding: 28px 24px 24px;
-            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
+            border: 1px solid var(--border-strong);
+            border-radius: 24px;
+            padding: 32px 26px 26px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.22);
             text-align: center;
-        }
-
-        .auth-logo-wrap {
-            width: 64px;
-            height: 64px;
-            margin: 0 auto 14px;
-            border-radius: 18px;
-            background: linear-gradient(145deg, #182640, #0b1220);
-            border: 1px solid rgba(52, 211, 153, 0.38);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 10px 26px rgba(16, 185, 129, 0.18);
         }
 
         .auth-badge {
@@ -124,54 +187,52 @@
             letter-spacing: 0.08em;
             text-transform: uppercase;
             color: var(--mint);
-            background: rgba(52, 211, 153, 0.1);
-            border: 1px solid rgba(52, 211, 153, 0.25);
+            background: var(--accent-soft);
+            border: 1px solid var(--accent-border);
             padding: 4px 10px;
             border-radius: 999px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .auth-title {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 800;
-            letter-spacing: -0.02em;
-            margin-bottom: 4px;
+            letter-spacing: -0.03em;
+            margin-bottom: 6px;
         }
 
         .auth-title span {
-            background: var(--brand-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--mint);
         }
 
         .auth-sub {
             font-size: 13px;
             color: var(--text-secondary);
-            margin-bottom: 18px;
+            margin-bottom: 20px;
             line-height: 1.45;
         }
 
-        /* Cloud Account Login View */
         .google-btn {
             width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            background: #f8fafc;
-            color: #0f172a;
-            border: none;
+            background: #ffffff;
+            color: #111827;
+            border: 1px solid var(--border-strong);
             border-radius: var(--radius-md);
             padding: 13px 16px;
             font-size: 14px;
             font-weight: 700;
             font-family: inherit;
             cursor: pointer;
+            box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
             transition: transform 0.15s ease, background 0.15s ease;
         }
 
         .google-btn:hover {
-            background: #ffffff;
+            background: #f8fafc;
         }
 
         .google-btn:active {
@@ -224,10 +285,10 @@
         .auth-tab-btn.active {
             background: var(--bg-card);
             color: var(--mint);
-            border: 1px solid rgba(52, 211, 153, 0.28);
+            border: 1px solid var(--accent-border);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
         }
 
-        /* Setup Mode Form */
         .auth-setup-form {
             text-align: left;
         }
@@ -236,112 +297,17 @@
             margin-top: 11px;
         }
 
-        .pin-setup-input {
-            text-align: center;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 20px;
-            font-weight: 700;
-            letter-spacing: 0.35em;
-        }
-
-        /* Unlock Keypad Mode */
-        .pin-dots {
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-            margin: 6px 0 12px;
-        }
-
-        .pin-dot {
-            width: 15px;
-            height: 15px;
-            border-radius: 50%;
-            border: 2px solid var(--border-strong);
-            background: rgba(9, 14, 26, 0.7);
-            transition: all 0.16s ease;
-        }
-
-        .pin-dot.filled {
-            border-color: var(--mint);
-            background: var(--mint);
-            box-shadow: 0 0 12px rgba(52, 211, 153, 0.65);
-            transform: scale(1.12);
-        }
-
-        .pin-dots.error .pin-dot {
-            border-color: var(--danger);
-            background: var(--danger);
-            box-shadow: 0 0 12px rgba(244, 63, 94, 0.65);
-        }
-
-        .pin-dots.shake {
-            animation: pinShake 0.36s ease;
-        }
-
-        @keyframes pinShake {
-            0%, 100% { transform: translateX(0); }
-            20% { transform: translateX(-9px); }
-            40% { transform: translateX(9px); }
-            60% { transform: translateX(-6px); }
-            80% { transform: translateX(6px); }
-        }
-
         .auth-status {
             min-height: 18px;
             font-size: 12px;
             font-weight: 600;
-            color: #fda4af;
+            color: var(--danger-text);
             margin-bottom: 12px;
             line-height: 1.4;
         }
 
         .auth-status.ok {
             color: var(--mint);
-        }
-
-        .keypad {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 11px;
-            max-width: 276px;
-            margin: 0 auto;
-        }
-
-        .key-btn {
-            height: 60px;
-            border-radius: 16px;
-            background: rgba(13, 20, 36, 0.85);
-            border: 1px solid var(--border-strong);
-            color: var(--text-main);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 22px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.12s ease;
-            user-select: none;
-        }
-
-        .key-btn:hover {
-            border-color: rgba(52, 211, 153, 0.45);
-            background: #162238;
-        }
-
-        .key-btn:active {
-            transform: scale(0.93);
-            background: rgba(52, 211, 153, 0.18);
-            border-color: var(--mint);
-        }
-
-        .key-btn.action-key {
-            font-family: 'Inter', sans-serif;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            background: rgba(13, 20, 36, 0.45);
         }
 
         .auth-footer-link {
@@ -367,15 +333,24 @@
         .spinner {
             width: 26px;
             height: 26px;
-            border: 3px solid rgba(52, 211, 153, 0.2);
+            border: 3px solid var(--accent-soft);
             border-top-color: var(--mint);
             border-radius: 50%;
             animation: spin 0.75s linear infinite;
             margin: 14px auto;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        /* ==================== DESKTOP / TABLET SIDEBAR (HIDDEN ON PHONE) ==================== */
+        .desktop-sidebar {
+            display: none;
+        }
+
+        .desktop-page-header {
+            display: none;
+        }
+
+        .main-stage {
+            width: 100%;
         }
 
         /* ==================== MAIN APP SHELL ==================== */
@@ -385,12 +360,12 @@
             padding: 18px 16px 24px;
         }
 
-        /* --- Header --- */
+        /* --- Mobile Header (Wordmark Only on Left) --- */
         .topbar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             padding: 4px 2px;
             gap: 8px;
         }
@@ -398,107 +373,31 @@
         .brand {
             display: flex;
             align-items: center;
-            gap: 10px;
             min-width: 0;
         }
 
-        .brand-icon {
-            width: 38px;
-            height: 38px;
-            border-radius: 11px;
-            background: linear-gradient(145deg, #162238, #0c1322);
-            border: 1px solid rgba(52, 211, 153, 0.32);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
-            flex-shrink: 0;
-        }
-
         .brand-name {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 800;
             letter-spacing: -0.03em;
             line-height: 1.1;
+            color: var(--text-main);
         }
 
         .brand-name span {
-            background: var(--brand-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .brand-sub {
-            font-size: 11px;
-            color: var(--text-muted);
-            font-weight: 500;
-            letter-spacing: 0.02em;
+            color: var(--mint);
         }
 
         .topbar-actions {
             display: flex;
             align-items: center;
-            gap: 7px;
+            gap: 8px;
             flex-shrink: 0;
         }
 
-        .sync-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(52, 211, 153, 0.25);
-            color: var(--mint);
-            padding: 6px 10px;
-            border-radius: 999px;
-            font-size: 11px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .sync-pill.syncing {
-            background: rgba(6, 182, 212, 0.12);
-            border-color: rgba(6, 182, 212, 0.3);
-            color: var(--cyan);
-        }
-
-        .sync-pill.offline {
-            background: rgba(245, 158, 11, 0.12);
-            border-color: rgba(245, 158, 11, 0.3);
-            color: var(--warning);
-        }
-
-        .cycle-pill-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-strong);
-            color: var(--text-main);
-            padding: 6px 11px;
-            border-radius: 999px;
-            font-size: 11px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .cycle-pill-btn:hover {
-            border-color: var(--mint);
-        }
-
-        .cycle-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--mint);
-            box-shadow: 0 0 8px var(--mint);
-        }
-
-        .lock-pill-btn {
-            width: 32px;
-            height: 32px;
+        .theme-icon-btn {
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
             background: var(--bg-card);
             border: 1px solid var(--border-strong);
@@ -507,12 +406,41 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            box-shadow: var(--card-shadow);
             transition: all 0.2s ease;
         }
 
-        .lock-pill-btn:hover {
+        .theme-icon-btn:hover {
             color: var(--mint);
             border-color: var(--mint);
+        }
+
+        /* Sync Status Pill */
+        .sync-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--accent-soft);
+            border: 1px solid var(--accent-border);
+            color: var(--mint);
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .sync-pill.syncing {
+            background: var(--icon-bg);
+            border-color: var(--icon-border);
+            color: var(--cyan);
+        }
+
+        .sync-pill.offline {
+            background: rgba(217, 155, 56, 0.12);
+            border-color: rgba(217, 155, 56, 0.28);
+            color: var(--warning);
         }
 
         /* --- Rollover Alert Banner --- */
@@ -521,13 +449,13 @@
             align-items: center;
             justify-content: space-between;
             gap: 12px;
-            background: rgba(16, 185, 129, 0.12);
-            border: 1px solid rgba(52, 211, 153, 0.35);
+            background: var(--accent-soft);
+            border: 1px solid var(--accent-border);
             border-radius: var(--radius-md);
             padding: 12px 14px;
             margin-bottom: 16px;
             font-size: 13px;
-            color: #d1fae5;
+            color: var(--text-banner);
             animation: fadeSlideIn 0.3s ease;
         }
 
@@ -563,24 +491,13 @@
         /* --- Hero Summary Card --- */
         .hero-card {
             position: relative;
-            background: linear-gradient(160deg, #16233b 0%, #101829 100%);
-            border: 1px solid rgba(52, 211, 153, 0.22);
+            background: var(--bg-hero);
+            border: 1px solid var(--border-strong);
             border-radius: var(--radius-lg);
             padding: 22px 20px;
             margin-bottom: 18px;
             overflow: hidden;
-            box-shadow: 0 14px 34px rgba(0, 0, 0, 0.32);
-        }
-
-        .hero-card::before {
-            content: '';
-            position: absolute;
-            top: -50px;
-            right: -40px;
-            width: 170px;
-            height: 170px;
-            background: radial-gradient(circle, rgba(6, 182, 212, 0.18), transparent 70%);
-            pointer-events: none;
+            box-shadow: var(--hero-shadow);
         }
 
         .hero-top {
@@ -593,7 +510,7 @@
 
         .hero-label {
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.06em;
             color: var(--mint);
@@ -610,7 +527,7 @@
             font-size: 38px;
             font-weight: 700;
             letter-spacing: -0.03em;
-            color: #ffffff;
+            color: var(--text-main);
             margin: 6px 0 14px;
             line-height: 1.05;
         }
@@ -630,7 +547,7 @@
         .budget-track {
             width: 100%;
             height: 8px;
-            background: rgba(15, 23, 42, 0.8);
+            background: var(--bg-input);
             border-radius: 999px;
             overflow: hidden;
             border: 1px solid var(--border);
@@ -645,11 +562,11 @@
         }
 
         .budget-fill.warn {
-            background: linear-gradient(90deg, #f59e0b, #f97316);
+            background: linear-gradient(90deg, #d99b38, #d97724);
         }
 
         .budget-fill.over {
-            background: linear-gradient(90deg, #f43f5e, #e11d48);
+            background: linear-gradient(90deg, #e05268, #c93b52);
         }
 
         .hero-stats {
@@ -661,7 +578,7 @@
         }
 
         .stat-box {
-            background: rgba(9, 14, 26, 0.45);
+            background: var(--bg-stat-box);
             border: 1px solid var(--border);
             border-radius: var(--radius-sm);
             padding: 10px 11px;
@@ -689,7 +606,7 @@
         }
 
         .section-title {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.06em;
@@ -703,6 +620,12 @@
             font-size: 12px;
             font-weight: 600;
             cursor: pointer;
+            transition: opacity 0.15s ease;
+        }
+
+        .text-action:hover {
+            opacity: 0.85;
+            text-decoration: underline;
         }
 
         /* --- Category Breakdown Pills --- */
@@ -728,18 +651,57 @@
             border-radius: 12px;
             padding: 9px 12px;
             cursor: pointer;
+            box-shadow: var(--card-shadow);
             transition: all 0.2s ease;
+        }
+
+        .cat-chip:hover {
+            border-color: var(--border-strong);
+            background: var(--bg-card-hover);
+        }
+
+        .cat-chip-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .cat-chip-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .cat-chip-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--cyan);
+            flex-shrink: 0;
         }
 
         .cat-chip.active {
             border-color: var(--mint);
-            background: rgba(52, 211, 153, 0.1);
+            background: var(--accent-soft);
+        }
+
+        .cat-chip.active .cat-chip-icon {
+            color: var(--mint);
         }
 
         .cat-chip-name {
             font-size: 12px;
             font-weight: 600;
             color: var(--text-main);
+        }
+
+        .cat-chip-pct {
+            display: none;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
         }
 
         .cat-chip-amt {
@@ -776,11 +738,12 @@
             font-size: 14px;
             font-family: inherit;
             outline: none;
+            box-shadow: var(--card-shadow);
             transition: border-color 0.2s ease;
         }
 
         .search-input:focus {
-            border-color: var(--cyan);
+            border-color: var(--mint);
         }
 
         /* --- Expense List --- */
@@ -799,6 +762,7 @@
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
             padding: 13px 14px;
+            box-shadow: var(--card-shadow);
             transition: background 0.18s ease, border-color 0.18s ease;
         }
 
@@ -816,15 +780,15 @@
         }
 
         .exp-icon {
-            width: 42px;
-            height: 42px;
-            border-radius: 12px;
-            background: rgba(6, 182, 212, 0.1);
-            border: 1px solid rgba(6, 182, 212, 0.22);
+            width: 40px;
+            height: 40px;
+            border-radius: 11px;
+            background: var(--icon-bg);
+            border: 1px solid var(--icon-border);
+            color: var(--cyan);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 19px;
             flex-shrink: 0;
         }
 
@@ -856,9 +820,9 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            background: rgba(52, 211, 153, 0.14);
+            background: var(--accent-soft);
             color: var(--mint);
-            border: 1px solid rgba(52, 211, 153, 0.3);
+            border: 1px solid var(--accent-border);
             padding: 2px 7px;
             border-radius: 6px;
             font-size: 10px;
@@ -878,7 +842,7 @@
         .exp-right {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             flex-shrink: 0;
         }
 
@@ -891,14 +855,14 @@
 
         .exp-actions {
             display: flex;
-            gap: 4px;
+            gap: 5px;
         }
 
         .icon-btn {
             width: 30px;
             height: 30px;
             border-radius: 8px;
-            background: rgba(15, 23, 42, 0.55);
+            background: var(--bg-input);
             border: 1px solid var(--border);
             color: var(--text-secondary);
             display: flex;
@@ -915,22 +879,32 @@
 
         .icon-btn.del:hover {
             color: var(--danger);
-            border-color: rgba(244, 63, 94, 0.4);
+            border-color: rgba(224, 82, 104, 0.4);
         }
 
         /* --- Empty State --- */
         .empty-state {
             text-align: center;
-            padding: 40px 20px;
+            padding: 44px 20px;
             background: var(--bg-card);
             border: 1px dashed var(--border-strong);
             border-radius: var(--radius-lg);
             color: var(--text-secondary);
+            box-shadow: var(--card-shadow);
+            grid-column: 1 / -1;
         }
 
         .empty-state-icon {
-            font-size: 32px;
-            margin-bottom: 10px;
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 12px;
+            border-radius: 14px;
+            background: var(--icon-bg);
+            border: 1px solid var(--icon-border);
+            color: var(--cyan);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .empty-state h3 {
@@ -942,18 +916,24 @@
         .empty-state p {
             font-size: 13px;
             color: var(--text-muted);
-            max-width: 320px;
+            max-width: 340px;
             margin: 0 auto;
             line-height: 1.5;
         }
 
         /* --- History View --- */
+        .history-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
         .history-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
-            margin-bottom: 12px;
             overflow: hidden;
+            box-shadow: var(--card-shadow);
         }
 
         .history-summary {
@@ -975,6 +955,7 @@
             color: var(--text-main);
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
             gap: 8px;
         }
 
@@ -984,9 +965,9 @@
             letter-spacing: 0.05em;
             padding: 2px 7px;
             border-radius: 6px;
-            background: rgba(6, 182, 212, 0.14);
+            background: var(--icon-bg);
             color: var(--cyan);
-            border: 1px solid rgba(6, 182, 212, 0.28);
+            border: 1px solid var(--icon-border);
             font-weight: 700;
         }
 
@@ -998,6 +979,7 @@
 
         .history-right {
             text-align: right;
+            flex-shrink: 0;
         }
 
         .history-total {
@@ -1017,7 +999,7 @@
             display: none;
             padding: 0 16px 16px;
             border-top: 1px solid var(--border);
-            background: rgba(9, 14, 26, 0.35);
+            background: var(--bg-subpanel);
         }
 
         .history-details.open {
@@ -1045,19 +1027,41 @@
             border-bottom: none;
         }
 
-        /* --- Settings View --- */
+        .mini-item-title-row {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 7px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .mini-item-icon {
+            display: inline-flex;
+            align-items: center;
+            color: var(--cyan);
+        }
+
+        /* --- Settings & Profile Cards --- */
+        .cards-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
         .settings-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
-            padding: 18px;
-            margin-bottom: 14px;
+            padding: 20px;
+            box-shadow: var(--card-shadow);
         }
 
         .settings-card h3 {
             font-size: 15px;
             font-weight: 700;
             margin-bottom: 4px;
+            color: var(--text-main);
         }
 
         .settings-desc {
@@ -1067,13 +1071,69 @@
             margin-bottom: 14px;
         }
 
+        .profile-hero {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .profile-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--brand-gradient);
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 4px 14px rgba(46, 139, 110, 0.22);
+            overflow: hidden;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-name-display {
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .profile-email-display {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+            word-break: break-all;
+        }
+
+        .profile-provider-tag {
+            display: inline-block;
+            margin-top: 5px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--cyan);
+            background: var(--icon-bg);
+            border: 1px solid var(--icon-border);
+            padding: 2px 8px;
+            border-radius: 999px;
+        }
+
         .account-banner {
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 10px;
             background: var(--bg-input);
-            border: 1px solid rgba(52, 211, 153, 0.28);
+            border: 1px solid var(--accent-border);
             border-radius: var(--radius-md);
             padding: 12px 14px;
             margin-bottom: 12px;
@@ -1116,8 +1176,8 @@
 
         .seg-btn.active {
             background: var(--brand-gradient);
-            color: #06101d;
-            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
+            color: #ffffff;
+            box-shadow: 0 3px 10px rgba(46, 139, 110, 0.2);
         }
 
         .field-group {
@@ -1148,6 +1208,125 @@
             border-color: var(--mint);
         }
 
+        /* Custom Icon Category Selector */
+        .cat-select-trigger {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-strong);
+            color: var(--text-main);
+            border-radius: var(--radius-sm);
+            padding: 10px 12px;
+            font-size: 14px;
+            font-family: inherit;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: left;
+            transition: border-color 0.2s ease;
+        }
+
+        .cat-select-trigger:hover,
+        .cat-select-trigger.open {
+            border-color: var(--mint);
+        }
+
+        .cat-trigger-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .cat-trigger-icon {
+            display: inline-flex;
+            align-items: center;
+            color: var(--mint);
+            flex-shrink: 0;
+        }
+
+        .cat-trigger-label {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .cat-picker-panel {
+            display: none;
+            margin-top: 10px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius-md);
+            padding: 10px;
+            animation: fadeSlideIn 0.18s ease;
+        }
+
+        .cat-picker-panel.open {
+            display: block;
+        }
+
+        .cat-picker-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+        }
+
+        @media (min-width: 460px) {
+            .cat-picker-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .cat-picker-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            border-radius: 9px;
+            padding: 8px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.15s ease;
+        }
+
+        .cat-picker-item:hover {
+            border-color: var(--border-strong);
+            background: var(--bg-card-hover);
+        }
+
+        .cat-picker-item.selected {
+            border-color: var(--mint);
+            background: var(--accent-soft);
+            color: var(--mint);
+        }
+
+        .cat-picker-item svg {
+            flex-shrink: 0;
+            color: var(--cyan);
+        }
+
+        .cat-picker-item.selected svg {
+            color: var(--mint);
+        }
+
+        .cat-picker-item span {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .inline-input-row {
+            display: flex;
+            gap: 8px;
+        }
+
         .btn-row {
             display: flex;
             flex-wrap: wrap;
@@ -1174,8 +1353,8 @@
         }
 
         .btn-danger {
-            border-color: rgba(244, 63, 94, 0.35);
-            color: #fda4af;
+            border-color: rgba(224, 82, 104, 0.35);
+            color: var(--danger-text);
         }
 
         .storage-bar {
@@ -1193,17 +1372,17 @@
             width: 0%;
         }
 
-        /* --- Bottom Navigation & Floating Add Button --- */
+        /* --- Mobile Bottom Navigation & Floating Add Button --- */
         .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(11, 17, 32, 0.92);
+            background: var(--bg-nav);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border-top: 1px solid var(--border);
-            padding: 8px 16px calc(10px + var(--safe-bottom));
+            padding: 8px 10px calc(10px + var(--safe-bottom));
             z-index: 40;
         }
 
@@ -1213,12 +1392,13 @@
             display: grid;
             grid-template-columns: 1fr auto 1fr;
             align-items: center;
-            gap: 12px;
+            gap: 6px;
         }
 
         .nav-side {
             display: flex;
             justify-content: space-around;
+            gap: 2px;
         }
 
         .nav-tab {
@@ -1229,10 +1409,10 @@
             flex-direction: column;
             align-items: center;
             gap: 4px;
-            font-size: 11px;
+            font-size: 10.5px;
             font-weight: 600;
             cursor: pointer;
-            padding: 4px 12px;
+            padding: 4px 6px;
             transition: color 0.18s ease;
         }
 
@@ -1241,23 +1421,24 @@
         }
 
         .nav-tab svg {
-            width: 21px;
-            height: 21px;
+            width: 20px;
+            height: 20px;
         }
 
         .fab-add {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
             background: var(--brand-gradient);
-            color: #05101c;
+            color: #ffffff;
             border: none;
             border-radius: 999px;
-            padding: 13px 22px;
-            font-size: 14px;
-            font-weight: 800;
+            padding: 12px 16px;
+            font-size: 13px;
+            font-weight: 700;
             letter-spacing: -0.01em;
+            white-space: nowrap;
             cursor: pointer;
             box-shadow: var(--glow-mint);
             transition: transform 0.15s ease;
@@ -1267,11 +1448,254 @@
             transform: scale(0.96);
         }
 
+        /* ==================== TABLET & DESKTOP RESPONSIVE SYSTEM ==================== */
+        @media (min-width: 820px) {
+            body {
+                display: flex;
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+
+            .topbar,
+            .bottom-nav {
+                display: none;
+            }
+
+            .desktop-sidebar {
+                display: flex;
+                flex-direction: column;
+                width: 248px;
+                flex-shrink: 0;
+                position: sticky;
+                top: 0;
+                height: 100vh;
+                background: var(--bg-surface);
+                border-right: 1px solid var(--border);
+                padding: 26px 16px 20px;
+                z-index: 30;
+            }
+
+            .sidebar-brand {
+                padding: 0 8px 20px;
+            }
+
+            .sidebar-brand .brand-name {
+                font-size: 24px;
+            }
+
+            .sidebar-cta {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                background: var(--brand-gradient);
+                color: #ffffff;
+                border: none;
+                border-radius: var(--radius-md);
+                padding: 13px 16px;
+                font-size: 14px;
+                font-weight: 700;
+                font-family: inherit;
+                cursor: pointer;
+                box-shadow: var(--glow-mint);
+                margin-bottom: 22px;
+                transition: transform 0.15s ease, opacity 0.15s ease;
+            }
+
+            .sidebar-cta:hover {
+                opacity: 0.94;
+            }
+
+            .sidebar-cta:active {
+                transform: scale(0.98);
+            }
+
+            .sidebar-nav {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                flex: 1;
+            }
+
+            .sidebar-nav-item {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                gap: 11px;
+                background: transparent;
+                border: 1px solid transparent;
+                color: var(--text-secondary);
+                border-radius: 11px;
+                padding: 11px 12px;
+                font-size: 13.5px;
+                font-weight: 600;
+                font-family: inherit;
+                cursor: pointer;
+                text-align: left;
+                transition: all 0.16s ease;
+            }
+
+            .sidebar-nav-item:hover {
+                background: var(--bg-card-hover);
+                color: var(--text-main);
+            }
+
+            .sidebar-nav-item.active {
+                background: var(--accent-soft);
+                border-color: var(--accent-border);
+                color: var(--mint);
+                font-weight: 700;
+            }
+
+            .sidebar-nav-item svg {
+                width: 18px;
+                height: 18px;
+                flex-shrink: 0;
+            }
+
+            .sidebar-footer {
+                padding-top: 14px;
+                border-top: 1px solid var(--border);
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .sidebar-footer-btn {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                background: var(--bg-input);
+                border: 1px solid var(--border);
+                color: var(--text-secondary);
+                border-radius: 10px;
+                padding: 9px 12px;
+                font-size: 12px;
+                font-weight: 600;
+                font-family: inherit;
+                cursor: pointer;
+                transition: all 0.16s ease;
+            }
+
+            .sidebar-footer-btn:hover {
+                border-color: var(--border-strong);
+                color: var(--text-main);
+            }
+
+            .main-stage {
+                flex: 1;
+                min-width: 0;
+                padding: 28px 28px 48px;
+            }
+
+            .app-shell {
+                max-width: 1160px;
+                padding: 0;
+            }
+
+            .desktop-page-header {
+                display: flex;
+                align-items: flex-end;
+                justify-content: space-between;
+                gap: 16px;
+                margin-bottom: 22px;
+                padding-bottom: 16px;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .desktop-page-title {
+                font-size: 24px;
+                font-weight: 800;
+                letter-spacing: -0.025em;
+                color: var(--text-main);
+            }
+
+            .desktop-page-sub {
+                font-size: 13px;
+                color: var(--text-secondary);
+                margin-top: 3px;
+            }
+
+            .history-grid {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 14px;
+                align-items: start;
+            }
+
+            .cards-grid {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 16px;
+                align-items: start;
+            }
+        }
+
+        /* Wide Desktop Split Dashboard (>= 1080px) */
+        @media (min-width: 1080px) {
+            .main-stage {
+                padding: 32px 40px 56px;
+            }
+
+            .dashboard-grid {
+                display: grid;
+                grid-template-columns: 370px minmax(0, 1fr);
+                gap: 26px;
+                align-items: start;
+            }
+
+            .dashboard-summary-col {
+                position: sticky;
+                top: 28px;
+            }
+
+            .cat-panel {
+                background: var(--bg-card);
+                border: 1px solid var(--border);
+                border-radius: var(--radius-lg);
+                padding: 18px;
+                box-shadow: var(--card-shadow);
+            }
+
+            .cat-panel .section-header {
+                margin-top: 0;
+            }
+
+            .cat-strip {
+                flex-direction: column;
+                overflow-x: visible;
+                padding-bottom: 0;
+                gap: 7px;
+            }
+
+            .cat-chip {
+                width: 100%;
+                justify-content: space-between;
+                background: var(--bg-input);
+                padding: 10px 12px;
+                box-shadow: none;
+            }
+
+            .cat-chip-pct {
+                display: inline-block;
+            }
+
+            .dashboard-feed-col .section-header {
+                margin-top: 0;
+            }
+
+            .expense-item {
+                padding: 15px 18px;
+            }
+        }
+
         /* --- Modal / Bottom Sheet --- */
         .modal-backdrop {
             position: fixed;
             inset: 0;
-            background: rgba(4, 8, 18, 0.78);
+            background: var(--bg-backdrop);
             backdrop-filter: blur(6px);
             -webkit-backdrop-filter: blur(6px);
             display: none;
@@ -1293,21 +1717,21 @@
 
         .sheet {
             width: 100%;
-            max-width: 540px;
+            max-width: 560px;
             max-height: 92vh;
             overflow-y: auto;
-            background: #121b2e;
+            background: var(--bg-sheet);
             border: 1px solid var(--border-strong);
             border-radius: 24px 24px 0 0;
             padding: 20px 20px calc(24px + var(--safe-bottom));
-            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.25);
             animation: sheetUp 0.24s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         @media (min-width: 600px) {
             .sheet {
                 border-radius: 22px;
-                padding-bottom: 24px;
+                padding: 24px 26px;
             }
         }
 
@@ -1326,6 +1750,7 @@
         .sheet-title {
             font-size: 18px;
             font-weight: 800;
+            color: var(--text-main);
         }
 
         .close-btn {
@@ -1346,7 +1771,7 @@
             display: flex;
             align-items: center;
             background: var(--bg-input);
-            border: 1px solid rgba(52, 211, 153, 0.35);
+            border: 1px solid var(--accent-border);
             border-radius: var(--radius-md);
             padding: 12px 16px;
             margin-bottom: 14px;
@@ -1364,7 +1789,7 @@
             width: 100%;
             background: transparent;
             border: none;
-            color: #ffffff;
+            color: var(--text-main);
             font-family: 'JetBrains Mono', monospace;
             font-size: 30px;
             font-weight: 700;
@@ -1434,9 +1859,9 @@
             position: absolute;
             top: 8px;
             right: 8px;
-            background: rgba(9, 14, 26, 0.85);
-            color: #fda4af;
-            border: 1px solid rgba(244, 63, 94, 0.45);
+            background: rgba(12, 16, 23, 0.85);
+            color: #f28b9c;
+            border: 1px solid rgba(224, 82, 104, 0.45);
             border-radius: 8px;
             padding: 5px 10px;
             font-size: 11px;
@@ -1448,12 +1873,12 @@
             width: 100%;
             margin-top: 18px;
             background: var(--brand-gradient);
-            color: #05101c;
+            color: #ffffff;
             border: none;
             border-radius: var(--radius-md);
             padding: 15px;
             font-size: 15px;
-            font-weight: 800;
+            font-weight: 700;
             cursor: pointer;
             box-shadow: var(--glow-mint);
         }
@@ -1469,36 +1894,19 @@
             max-height: 68vh;
             object-fit: contain;
             border-radius: var(--radius-sm);
-            background: #060a14;
+            background: #080b10;
             border: 1px solid var(--border);
         }
     </style>
 </head>
 <body class="locked">
 
-    <!-- ==================== LOGIN / VAULT LOCK SCREEN ==================== -->
+    <!-- ==================== LOGIN / CLOUD VAULT SCREEN ==================== -->
     <div id="authOverlay" class="auth-overlay">
         <div class="auth-card">
-            <div class="auth-logo-wrap" aria-hidden="true">
-                <svg width="36" height="36" viewBox="0 0 32 32" fill="none">
-                    <defs>
-                        <linearGradient id="authGrad" x1="4" y1="4" x2="28" y2="28" gradientUnits="userSpaceOnUse">
-                            <stop offset="0%" stop-color="#34d399"/>
-                            <stop offset="55%" stop-color="#06b6d4"/>
-                            <stop offset="100%" stop-color="#3b82f6"/>
-                        </linearGradient>
-                    </defs>
-                    <path d="M8 26V8C8 6.89543 8.89543 6 10 6H17.5C20.5376 6 23 8.46243 23 11.5C23 14.5376 20.5376 17 17.5 17H12.5" stroke="url(#authGrad)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M15 13.5H25M20 13.5V25" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
-                    <circle cx="25.5" cy="21" r="1.5" fill="#34d399"/>
-                    <circle cx="25.5" cy="25.5" r="1.3" fill="#06b6d4"/>
-                </svg>
-            </div>
-
             <div class="auth-badge" id="authBadge">
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                    <path d="M7 11V7a5 5 0 0110 0v4"/>
+                    <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
                 </svg>
                 <span id="authBadgeText">Connecting Cloud Vault</span>
             </div>
@@ -1552,320 +1960,361 @@
                     <button type="button" onclick="handlePasswordReset()">Forgot Password?</button>
                 </div>
             </div>
-
-            <!-- MODE B: FIRST-TIME 4-DIGIT PIN SETUP -->
-            <div id="authSetupView" style="display:none;">
-                <h1 class="auth-title">Quick-Lock <span>PIN</span></h1>
-                <p class="auth-sub">Set a 4-digit PIN for instant daily unlocking on this device and your synced devices.</p>
-
-                <form class="auth-setup-form" onsubmit="handleVaultSetup(event)">
-                    <div class="field-group" style="margin-top:0;">
-                        <label class="field-label" for="setupNameInput">Display Name</label>
-                        <input type="text" id="setupNameInput" class="text-input" placeholder="e.g. Smiljan" maxlength="28" required>
-                    </div>
-
-                    <div class="form-grid-2">
-                        <div class="field-group">
-                            <label class="field-label" for="setupPinInput">Create 4-Digit PIN</label>
-                            <input type="password" id="setupPinInput" class="text-input pin-setup-input" placeholder="••••" maxlength="4" pattern="\d{4}" inputmode="numeric" required>
-                        </div>
-                        <div class="field-group">
-                            <label class="field-label" for="setupPinConfirm">Confirm PIN</label>
-                            <input type="password" id="setupPinConfirm" class="text-input pin-setup-input" placeholder="••••" maxlength="4" pattern="\d{4}" inputmode="numeric" required>
-                        </div>
-                    </div>
-
-                    <div class="auth-status" id="setupStatus" style="margin-top:10px; margin-bottom:2px; text-align:center;"></div>
-
-                    <button type="submit" class="btn-submit" style="margin-top:12px;">Save PIN & Open Vault</button>
-                </form>
-
-                <div class="auth-footer-link">
-                    <button type="button" onclick="signOutCloudAccount()">Sign Out</button>
-                </div>
-            </div>
-
-            <!-- MODE C: UNLOCK WITH 4-DIGIT PIN -->
-            <div id="authUnlockView" style="display:none;">
-                <h1 class="auth-title" id="unlockGreeting">Welcome Back</h1>
-                <p class="auth-sub" id="unlockSubEmail">Enter your 4-digit PIN to open PaperTrail</p>
-
-                <div class="pin-dots" id="pinDots">
-                    <div class="pin-dot"></div>
-                    <div class="pin-dot"></div>
-                    <div class="pin-dot"></div>
-                    <div class="pin-dot"></div>
-                </div>
-
-                <div class="auth-status" id="unlockStatus"></div>
-
-                <div class="keypad">
-                    <button type="button" class="key-btn" onclick="pressPinDigit('1')">1</button>
-                    <button type="button" class="key-btn" onclick="pressPinDigit('2')">2</button>
-                    <button type="button" class="key-btn" onclick="pressPinDigit('3')">3</button>
-                    <button type="button" class="key-btn" onclick="pressPinDigit('4')">4</button>
-                    <button type="button" class="key-btn" onclick="pressPinDigit('5')">5</button>
-                    <button type="button" class="key-btn" onclick="pressPinDigit('6')">6</button>
-                    <button type="button" class="key-btn" onclick="pressPinDigit('7')">7</button>
-                    <button type="button" class="key-btn" onclick="pressPinDigit('8')">8</button>
-                    <button type="button" class="key-btn" onclick="pressPinDigit('9')">9</button>
-                    <button type="button" class="key-btn action-key" onclick="clearPinEntry()">Clear</button>
-                    <button type="button" class="key-btn" onclick="pressPinDigit('0')">0</button>
-                    <button type="button" class="key-btn action-key" onclick="backspacePinDigit()" aria-label="Backspace">⌫</button>
-                </div>
-
-                <div class="auth-footer-link">
-                    <button type="button" onclick="resetVaultCredentials()">Reset PIN</button>
-                    <span>•</span>
-                    <button type="button" onclick="signOutCloudAccount()">Switch Account</button>
-                </div>
-            </div>
         </div>
     </div>
 
-    <!-- ==================== MAIN APPLICATION ==================== -->
-    <div class="app-shell">
-        <!-- Top Header -->
-        <header class="topbar">
-            <div class="brand">
-                <div class="brand-icon" aria-hidden="true">
-                    <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
-                        <defs>
-                            <linearGradient id="ptGrad1" x1="4" y1="4" x2="28" y2="28" gradientUnits="userSpaceOnUse">
-                                <stop offset="0%" stop-color="#34d399"/>
-                                <stop offset="55%" stop-color="#06b6d4"/>
-                                <stop offset="100%" stop-color="#3b82f6"/>
-                            </linearGradient>
-                        </defs>
-                        <path d="M8 26V8C8 6.89543 8.89543 6 10 6H17.5C20.5376 6 23 8.46243 23 11.5C23 14.5376 20.5376 17 17.5 17H12.5" stroke="url(#ptGrad1)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M15 13.5H25M20 13.5V25" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
-                        <circle cx="25.5" cy="21" r="1.5" fill="#34d399"/>
-                        <circle cx="25.5" cy="25.5" r="1.3" fill="#06b6d4"/>
-                    </svg>
-                </div>
-                <div>
-                    <div class="brand-name">Paper<span>Trail</span></div>
-                    <div class="brand-sub">Cloud-Synced Vault</div>
-                </div>
-            </div>
-
-            <div class="topbar-actions">
-                <button class="sync-pill" id="syncStatusPill" onclick="forceCloudSync()" title="Cloud Sync Status">
-                    <span id="syncStatusIcon">☁️</span>
-                    <span id="syncStatusText">Synced</span>
-                </button>
-                <button class="cycle-pill-btn" onclick="switchView('settings')" title="Change Weekly/Monthly Cycle">
-                    <span class="cycle-dot"></span>
-                    <span id="headerCycleLabel">Monthly</span>
-                </button>
-                <button class="lock-pill-btn" onclick="lockApp()" title="Lock PaperTrail">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                        <path d="M7 11V7a5 5 0 0110 0v4"/>
-                    </svg>
-                </button>
-            </div>
-        </header>
-
-        <!-- Auto-Rollover Notification Banner -->
-        <div id="rolloverBanner" class="rollover-banner">
-            <span id="rolloverText">New cycle started! Previous expenses archived to History.</span>
-            <button onclick="dismissRolloverBanner()">Dismiss</button>
+    <!-- ==================== DESKTOP & TABLET SIDEBAR ==================== -->
+    <aside class="desktop-sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-name">Paper<span>Trail</span></div>
         </div>
 
-        <!-- ==================== VIEW 1: ACTIVE DASHBOARD ==================== -->
-        <main id="view-dashboard" class="view active">
-            <section class="hero-card">
-                <div class="hero-top">
-                    <div>
-                        <div class="hero-label" id="activeCycleBadge">Current Monthly Trail</div>
-                        <div class="hero-dates" id="activeCycleDates">Nov 1 – Nov 30, 2026</div>
-                    </div>
-                    <button class="text-action" onclick="exportCSV('active')">Export CSV</button>
+        <button class="sidebar-cta" onclick="openExpenseModal()">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round">
+                <path d="M12 5v14M5 12h14"/>
+            </svg>
+            Log Expense
+        </button>
+
+        <nav class="sidebar-nav">
+            <button class="sidebar-nav-item active" data-nav="dashboard" onclick="switchView('dashboard')">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+                Active Trail
+            </button>
+
+            <button class="sidebar-nav-item" data-nav="history" onclick="switchView('history')">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                History
+            </button>
+
+            <button class="sidebar-nav-item" data-nav="settings" onclick="switchView('settings')">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                Settings
+            </button>
+
+            <button class="sidebar-nav-item" data-nav="profile" onclick="switchView('profile')">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                Profile
+            </button>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button type="button" class="sidebar-footer-btn" onclick="forceCloudSync()">
+                <span style="display:flex; align-items:center; gap:7px;">
+                    <span id="sidebarSyncIcon" style="display:inline-flex; color:var(--mint);"></span>
+                    <span id="sidebarSyncText">Cloud Synced</span>
+                </span>
+                <span style="font-size:10px; color:var(--text-muted);">Sync</span>
+            </button>
+
+            <button type="button" class="sidebar-footer-btn" onclick="toggleThemeQuick()">
+                <span style="display:flex; align-items:center; gap:7px;">
+                    <span id="sidebarThemeIcon" style="display:inline-flex;"></span>
+                    <span id="sidebarThemeLabel">White Theme</span>
+                </span>
+                <span style="font-size:10px; color:var(--text-muted);">Switch</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- ==================== MAIN STAGE ==================== -->
+    <div class="main-stage">
+        <div class="app-shell">
+            <!-- Mobile Header (Wordmark Only on Left) -->
+            <header class="topbar">
+                <div class="brand">
+                    <div class="brand-name">Paper<span>Trail</span></div>
                 </div>
 
-                <div class="hero-amount" id="heroTotal">$0.00</div>
+                <div class="topbar-actions">
+                    <button class="theme-icon-btn" id="quickThemeBtn" onclick="toggleThemeQuick()" title="Switch Dark / White Theme" aria-label="Switch Theme">
+                        <span id="quickThemeIcon" style="display:inline-flex;"></span>
+                    </button>
+                </div>
+            </header>
 
-                <div class="budget-wrap" id="budgetWrap" style="display: none;">
-                    <div class="budget-meta">
-                        <span id="budgetLabel">$0 / $0 target</span>
-                        <span id="budgetRemaining">$0 left</span>
+            <!-- Desktop & Tablet Contextual Header -->
+            <div class="desktop-page-header">
+                <div>
+                    <h1 class="desktop-page-title" id="desktopPageTitle">Active Trail</h1>
+                    <p class="desktop-page-sub" id="desktopPageSubtitle">Monitor your active spending cycle, category shares, and receipts.</p>
+                </div>
+                <div id="desktopHeaderActions">
+                    <button class="btn-secondary" style="min-width:auto; padding:9px 14px;" onclick="exportCSV('active')">Export Active CSV</button>
+                </div>
+            </div>
+
+            <!-- Auto-Rollover Notification Banner -->
+            <div id="rolloverBanner" class="rollover-banner">
+                <span id="rolloverText">New cycle started! Previous expenses archived to History.</span>
+                <button onclick="dismissRolloverBanner()">Dismiss</button>
+            </div>
+
+            <!-- ==================== VIEW 1: ACTIVE DASHBOARD ==================== -->
+            <main id="view-dashboard" class="view active">
+                <div class="dashboard-grid">
+                    <!-- Left / Top Summary Column -->
+                    <div class="dashboard-summary-col">
+                        <section class="hero-card">
+                            <div class="hero-top">
+                                <div>
+                                    <div class="hero-label" id="activeCycleBadge">Current Monthly Trail</div>
+                                    <div class="hero-dates" id="activeCycleDates">Nov 1 – Nov 30, 2026</div>
+                                </div>
+                                <button class="text-action" onclick="exportCSV('active')">Export CSV</button>
+                            </div>
+
+                            <div class="hero-amount" id="heroTotal">$0.00</div>
+
+                            <div class="budget-wrap" id="budgetWrap" style="display: none;">
+                                <div class="budget-meta">
+                                    <span id="budgetLabel">$0 / $0 target</span>
+                                    <span id="budgetRemaining">$0 left</span>
+                                </div>
+                                <div class="budget-track">
+                                    <div class="budget-fill" id="budgetFill"></div>
+                                </div>
+                            </div>
+
+                            <div class="hero-stats">
+                                <div class="stat-box">
+                                    <div class="stat-title">Entries</div>
+                                    <div class="stat-val" id="statCount">0</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-title">Daily Avg</div>
+                                    <div class="stat-val" id="statAvg">$0.00</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-title">Receipts</div>
+                                    <div class="stat-val" id="statReceipts">0</div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <div class="cat-panel">
+                            <div class="section-header">
+                                <span class="section-title">Category Breakdown</span>
+                                <button class="text-action" id="clearFilterBtn" style="display:none;" onclick="setCategoryFilter('ALL')">Reset Filter</button>
+                            </div>
+                            <div class="cat-strip" id="categoryStrip"></div>
+                        </div>
                     </div>
-                    <div class="budget-track">
-                        <div class="budget-fill" id="budgetFill"></div>
+
+                    <!-- Right / Main Feed Column -->
+                    <div class="dashboard-feed-col">
+                        <div class="section-header">
+                            <span class="section-title">Active Expenses</span>
+                            <span style="font-size:11px; color:var(--text-muted);" id="cycleCountdown"></span>
+                        </div>
+
+                        <div class="search-wrap">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 103.5 10.5a7.5 7.5 0 0013.15 6.15z"/>
+                            </svg>
+                            <input type="text" id="searchInput" class="search-input" placeholder="Search merchant, category, payment, or note..." oninput="renderDashboard()">
+                        </div>
+
+                        <div class="expense-list" id="activeExpenseList"></div>
                     </div>
                 </div>
+            </main>
 
-                <div class="hero-stats">
-                    <div class="stat-box">
-                        <div class="stat-title">Entries</div>
-                        <div class="stat-val" id="statCount">0</div>
+            <!-- ==================== VIEW 2: HISTORY ARCHIVE ==================== -->
+            <section id="view-history" class="view">
+                <div class="section-header" style="margin-top:4px;">
+                    <span class="section-title">Archived Cycles</span>
+                    <button class="text-action" onclick="exportCSV('all')">Export Full History</button>
+                </div>
+                <p style="font-size:12px; color:var(--text-secondary); margin-bottom:16px; line-height:1.5;">
+                    Completed weeks and months automatically move here when a new cycle begins. Tap any period to inspect expenses and receipts.
+                </p>
+                <div id="historyList" class="history-grid"></div>
+            </section>
+
+            <!-- ==================== VIEW 3: SETTINGS ==================== -->
+            <section id="view-settings" class="view">
+                <div class="cards-grid">
+                    <div class="settings-card">
+                        <h3>Appearance</h3>
+                        <p class="settings-desc">
+                            Switch between the dark slate theme and a clean white theme.
+                        </p>
+                        <div class="segmented">
+                            <button type="button" class="seg-btn" id="btnThemeDark" onclick="updateTheme('dark')">Dark Theme</button>
+                            <button type="button" class="seg-btn" id="btnThemeLight" onclick="updateTheme('light')">White Theme</button>
+                        </div>
                     </div>
-                    <div class="stat-box">
-                        <div class="stat-title">Daily Avg</div>
-                        <div class="stat-val" id="statAvg">$0.00</div>
+
+                    <div class="settings-card">
+                        <h3>Tracking Cycle</h3>
+                        <p class="settings-desc">
+                            Choose whether PaperTrail resets on a weekly or monthly schedule before automatically rolling completed expenses into History.
+                        </p>
+                        <div class="segmented">
+                            <button type="button" class="seg-btn" id="btnModeWeekly" onclick="updateCycleMode('weekly')">Weekly Reset</button>
+                            <button type="button" class="seg-btn" id="btnModeMonthly" onclick="updateCycleMode('monthly')">Monthly Reset</button>
+                        </div>
+
+                        <div class="field-group" id="weekStartGroup" style="display:none;">
+                            <label class="field-label" for="weekStartSelect">Week Starts On</label>
+                            <select id="weekStartSelect" class="select-input" onchange="updateWeekStart(this.value)">
+                                <option value="0">Sunday (Sun – Sat)</option>
+                                <option value="1">Monday (Mon – Sun)</option>
+                            </select>
+                        </div>
+
+                        <div class="field-group">
+                            <label class="field-label" for="budgetInput">Cycle Spending Target (Optional, $)</label>
+                            <input type="number" id="budgetInput" class="text-input" placeholder="e.g. 1500 (leave blank to hide)" min="0" step="10" onchange="updateBudgetTarget(this.value)">
+                        </div>
                     </div>
-                    <div class="stat-box">
-                        <div class="stat-title">Receipts</div>
-                        <div class="stat-val" id="statReceipts">0</div>
+
+                    <div class="settings-card">
+                        <h3>Cycle Controls</h3>
+                        <p class="settings-desc">
+                            Close out your current week or month early into History, or download a spreadsheet of all your recorded expenses.
+                        </p>
+                        <div class="btn-row">
+                            <button class="btn-secondary" onclick="manualArchiveCurrent()">Archive Current Cycle Now</button>
+                            <button class="btn-secondary" onclick="exportCSV('all')">Export Spreadsheet (CSV)</button>
+                        </div>
+                    </div>
+
+
+                    <div class="settings-card">
+                        <h3>Local Device Cache</h3>
+                        <p class="settings-desc" id="storageText">Calculating local cache usage...</p>
+                        <div class="storage-bar">
+                            <div class="storage-fill" id="storageFill"></div>
+                        </div>
+                        <div class="btn-row" style="margin-top:14px;">
+                            <button class="btn-secondary btn-danger" onclick="clearAllData()">Reset All Trail Data</button>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <div class="section-header">
-                <span class="section-title">Category Breakdown</span>
-                <button class="text-action" id="clearFilterBtn" style="display:none;" onclick="setCategoryFilter('ALL')">Reset Filter</button>
-            </div>
-            <div class="cat-strip" id="categoryStrip"></div>
+            <!-- ==================== VIEW 4: PROFILE ==================== -->
+            <section id="view-profile" class="view">
+                <div class="cards-grid">
+                    <div class="settings-card">
+                        <div class="profile-hero">
+                            <div class="profile-avatar" id="profileAvatar">PT</div>
+                            <div style="min-width:0; flex:1;">
+                                <div class="profile-name-display" id="profileDisplayName">PaperTrail User</div>
+                                <div class="profile-email-display" id="profileAccountEmail">Not signed in</div>
+                                <span class="profile-provider-tag" id="profileProviderBadge">Cloud Vault</span>
+                            </div>
+                        </div>
 
-            <div class="section-header">
-                <span class="section-title">Active Expenses</span>
-                <span style="font-size:11px; color:var(--text-muted);" id="cycleCountdown"></span>
-            </div>
+                        <div class="field-group" style="margin-top:0;">
+                            <label class="field-label" for="profileNameInput">Display Name</label>
+                            <div class="inline-input-row">
+                                <input type="text" id="profileNameInput" class="text-input" placeholder="Your name" maxlength="32">
+                                <button type="button" class="btn-secondary" style="flex:none; min-width:auto; padding:0 16px;" onclick="saveDisplayName()">Save</button>
+                            </div>
+                        </div>
 
-            <div class="search-wrap">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 103.5 10.5a7.5 7.5 0 0013.15 6.15z"/>
-                </svg>
-                <input type="text" id="searchInput" class="search-input" placeholder="Search merchant, category, or note..." oninput="renderDashboard()">
-            </div>
-
-            <div class="expense-list" id="activeExpenseList"></div>
-        </main>
-
-        <!-- ==================== VIEW 2: HISTORY ARCHIVE ==================== -->
-        <section id="view-history" class="view">
-            <div class="section-header" style="margin-top:4px;">
-                <span class="section-title">Archived Cycles</span>
-                <button class="text-action" onclick="exportCSV('all')">Export Full History</button>
-            </div>
-            <p style="font-size:12px; color:var(--text-secondary); margin-bottom:14px; line-height:1.5;">
-                Completed weeks and months automatically move here when a new cycle begins. Tap any period to inspect expenses and receipts.
-            </p>
-            <div id="historyList"></div>
-        </section>
-
-        <!-- ==================== VIEW 3: SETTINGS ==================== -->
-        <section id="view-settings" class="view">
-            <div class="settings-card">
-                <h3>Cloud Sync & Account</h3>
-                <p class="settings-desc">
-                    Your data is cached locally on this device for instant offline access and mirrored automatically to your private Firebase vault.
-                </p>
-                <div class="account-banner">
-                    <div>
-                        <div class="account-email" id="settingsAccountEmail">Not signed in</div>
-                        <div class="account-meta" id="settingsSyncMeta">Real-time Firestore sync active</div>
+                        <div class="hero-stats" style="margin-top:16px;">
+                            <div class="stat-box">
+                                <div class="stat-title">Active Cycle</div>
+                                <div class="stat-val" id="profileCycleMode">Monthly</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-title">Past Cycles</div>
+                                <div class="stat-val" id="profileArchiveCount">0</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-title">All Receipts</div>
+                                <div class="stat-val" id="profileTotalReceipts">0</div>
+                            </div>
+                        </div>
                     </div>
-                    <button class="btn-secondary" style="flex:none; min-width:auto; padding:8px 12px;" onclick="forceCloudSync()">Sync Now</button>
-                </div>
-                <div class="btn-row">
-                    <button class="btn-secondary btn-danger" onclick="signOutCloudAccount()">Sign Out of Account</button>
-                </div>
-            </div>
 
-            <div class="settings-card">
-                <h3>Tracking Cycle</h3>
-                <p class="settings-desc">
-                    Choose how long PaperTrail keeps expenses on your active screen before automatically rolling them into History for a clean slate.
-                </p>
-                <div class="segmented">
-                    <button type="button" class="seg-btn" id="btnModeWeekly" onclick="updateCycleMode('weekly')">Weekly Reset</button>
-                    <button type="button" class="seg-btn" id="btnModeMonthly" onclick="updateCycleMode('monthly')">Monthly Reset</button>
-                </div>
+                    <div style="display:flex; flex-direction:column; gap:14px;">
+                        <div class="settings-card">
+                            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px;">
+                                <h3 style="margin-bottom:0;">Cloud Sync Status</h3>
+                                <span class="sync-pill" id="syncStatusPill" onclick="forceCloudSync()" title="Tap to force sync">
+                                    <span id="syncStatusIcon" style="display:inline-flex;"></span>
+                                    <span id="syncStatusText">Synced</span>
+                                </span>
+                            </div>
+                            <p class="settings-desc" style="margin-bottom:12px;">
+                                Your expenses and receipt photos are cached locally for offline use and synced automatically to your Firebase vault.
+                            </p>
+                            <div class="account-banner" style="margin-bottom:0;">
+                                <div>
+                                    <div class="account-email" style="font-size:12px;">Firestore Real-Time Sync</div>
+                                    <div class="account-meta" id="settingsSyncMeta">Connected and up to date</div>
+                                </div>
+                                <button class="btn-secondary" style="flex:none; min-width:auto; padding:8px 12px;" onclick="forceCloudSync()">Sync Now</button>
+                            </div>
+                        </div>
 
-                <div class="field-group" id="weekStartGroup" style="display:none;">
-                    <label class="field-label" for="weekStartSelect">Week Starts On</label>
-                    <select id="weekStartSelect" class="select-input" onchange="updateWeekStart(this.value)">
-                        <option value="0">Sunday (Sun – Sat)</option>
-                        <option value="1">Monday (Mon – Sun)</option>
-                    </select>
+                        <div class="settings-card">
+                            <h3>Account Session</h3>
+                            <p class="settings-desc">
+                                Sign out of PaperTrail on this browser. Your data remains safely stored in your cloud vault.
+                            </p>
+                            <div class="btn-row" style="margin-top:0;">
+                                <button class="btn-secondary btn-danger" onclick="signOutCloudAccount()">Sign Out of Account</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="field-group">
-                    <label class="field-label" for="budgetInput">Cycle Spending Target (Optional, $)</label>
-                    <input type="number" id="budgetInput" class="text-input" placeholder="e.g. 1500 (leave blank to hide)" min="0" step="10" onchange="updateBudgetTarget(this.value)">
-                </div>
-            </div>
-
-            <div class="settings-card">
-                <h3>Security & Vault Lock</h3>
-                <p class="settings-desc">
-                    Control when PaperTrail locks automatically or update your 4-digit access PIN.
-                </p>
-
-                <div class="field-group" style="margin-top:0;">
-                    <label class="field-label" for="autoLockSelect">Auto-Lock After Inactivity</label>
-                    <select id="autoLockSelect" class="select-input" onchange="updateAutoLockMinutes(this.value)">
-                        <option value="0">Only when app closes or Lock is tapped</option>
-                        <option value="1">1 Minute</option>
-                        <option value="5">5 Minutes</option>
-                        <option value="15">15 Minutes</option>
-                    </select>
-                </div>
-
-                <div class="btn-row">
-                    <button class="btn-secondary" onclick="openChangePinModal()">Change 4-Digit PIN</button>
-                    <button class="btn-secondary" onclick="lockApp()">Lock Vault Now</button>
-                </div>
-            </div>
-
-            <div class="settings-card">
-                <h3>Cycle Controls & Backup</h3>
-                <p class="settings-desc">
-                    Need to close out your current week or month early, or save a local file copy of all records?
-                </p>
-                <div class="btn-row">
-                    <button class="btn-secondary" onclick="manualArchiveCurrent()">Archive Current Cycle Now</button>
-                    <button class="btn-secondary" onclick="downloadBackupJSON()">Backup JSON</button>
-                </div>
-            </div>
-
-            <div class="settings-card">
-                <h3>Local Device Cache</h3>
-                <p class="settings-desc" id="storageText">Calculating local cache usage...</p>
-                <div class="storage-bar">
-                    <div class="storage-fill" id="storageFill"></div>
-                </div>
-                <div class="btn-row" style="margin-top:14px;">
-                    <button class="btn-secondary btn-danger" onclick="clearAllData()">Reset All Trail Data</button>
-                </div>
-            </div>
-        </section>
+            </section>
+        </div>
     </div>
 
-    <!-- Bottom Navigation Bar -->
+    <!-- Mobile Bottom Navigation Bar -->
     <nav class="bottom-nav">
         <div class="bottom-nav-inner">
             <div class="nav-side">
-                <button class="nav-tab active" id="tab-dashboard" onclick="switchView('dashboard')">
+                <button class="nav-tab active" data-nav="dashboard" onclick="switchView('dashboard')">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                     </svg>
                     Active
                 </button>
+                <button class="nav-tab" data-nav="history" onclick="switchView('history')">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    History
+                </button>
             </div>
 
             <button class="fab-add" onclick="openExpenseModal()">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round">
                     <path d="M12 5v14M5 12h14"/>
                 </svg>
                 Log Expense
             </button>
 
             <div class="nav-side">
-                <button class="nav-tab" id="tab-history" onclick="switchView('history')">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    History
-                </button>
-                <button class="nav-tab" id="tab-settings" onclick="switchView('settings')">
+                <button class="nav-tab" data-nav="settings" onclick="switchView('settings')">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                     </svg>
                     Settings
+                </button>
+                <button class="nav-tab" data-nav="profile" onclick="switchView('profile')">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
+                    Profile
                 </button>
             </div>
         </div>
@@ -1894,18 +2343,17 @@
 
                 <div class="form-grid-2">
                     <div class="field-group">
-                        <label class="field-label" for="expCategory">Category</label>
-                        <select id="expCategory" class="select-input">
-                            <option value="Groceries">🛒 Groceries</option>
-                            <option value="Dining">🍽️ Dining & Coffee</option>
-                            <option value="Fuel & Auto">⛽ Fuel & Auto</option>
-                            <option value="Shopping">🛍️ Shopping</option>
-                            <option value="Bills & Utilities">🧾 Bills & Utilities</option>
-                            <option value="Health & Fitness">💪 Health & Fitness</option>
-                            <option value="Travel">✈️ Travel</option>
-                            <option value="Entertainment">🎬 Entertainment</option>
-                            <option value="Other">📦 Other</option>
-                        </select>
+                        <label class="field-label">Category</label>
+                        <input type="hidden" id="expCategory" value="Groceries">
+                        <button type="button" class="cat-select-trigger" id="catSelectTrigger" onclick="toggleCategoryPicker()">
+                            <span class="cat-trigger-left">
+                                <span class="cat-trigger-icon" id="catTriggerIcon"></span>
+                                <span class="cat-trigger-label" id="catTriggerLabel">Groceries</span>
+                            </span>
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted); flex-shrink:0;">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
                     </div>
 
                     <div class="field-group">
@@ -1914,14 +2362,27 @@
                     </div>
                 </div>
 
+                <!-- Expandable Icon Category Grid (Zero Emojis) -->
+                <div class="cat-picker-panel" id="catPickerPanel">
+                    <div class="cat-picker-grid" id="catPickerGrid"></div>
+                </div>
+
                 <div class="form-grid-2">
                     <div class="field-group">
                         <label class="field-label" for="expPayment">Payment Method</label>
-                        <select id="expPayment" class="select-input">
+                        <select id="expPayment" class="select-input" onchange="handlePaymentChange(this.value)">
                             <option value="Apple Pay">Apple Pay</option>
+                            <option value="Google Pay">Google Pay</option>
                             <option value="Credit Card">Credit Card</option>
                             <option value="Debit Card">Debit Card</option>
                             <option value="Cash">Cash</option>
+                            <option value="Bank Transfer / ACH">Bank Transfer / ACH</option>
+                            <option value="Zelle">Zelle</option>
+                            <option value="Venmo">Venmo</option>
+                            <option value="PayPal">PayPal</option>
+                            <option value="Check">Check</option>
+                            <option value="Gift Card">Gift Card</option>
+                            <option value="__custom__">Custom...</option>
                         </select>
                     </div>
 
@@ -1929,6 +2390,11 @@
                         <label class="field-label" for="expNote">Note (Optional)</label>
                         <input type="text" id="expNote" class="text-input" placeholder="Quick detail...">
                     </div>
+                </div>
+
+                <div class="field-group" id="customPaymentGroup" style="display:none;">
+                    <label class="field-label" for="expCustomPayment">Custom Payment Method</label>
+                    <input type="text" id="expCustomPayment" class="text-input" placeholder="e.g. Amex Gold, Business Card, Store Credit...">
                 </div>
 
                 <!-- Camera / Receipt Photo Capture -->
@@ -1939,14 +2405,14 @@
 
                     <div class="receipt-actions">
                         <button type="button" class="cam-btn" onclick="document.getElementById('cameraInput').click()">
-                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--mint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
                                 <circle cx="12" cy="13" r="4"/>
                             </svg>
                             Take Photo
                         </button>
                         <button type="button" class="cam-btn" onclick="document.getElementById('galleryInput').click()">
-                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
                                 <circle cx="8.5" cy="8.5" r="1.5"/>
                                 <polyline points="21 15 16 10 5 21"/>
@@ -1962,34 +2428,6 @@
                 </div>
 
                 <button type="submit" class="btn-submit" id="saveExpenseBtn">Save & Sync to Trail</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- ==================== MODAL: CHANGE PIN ==================== -->
-    <div class="modal-backdrop" id="changePinModal" onclick="handleBackdropClose(event, 'changePinModal')">
-        <div class="sheet" style="max-width:420px;">
-            <div class="sheet-header">
-                <div class="sheet-title">Change Vault PIN</div>
-                <button class="close-btn" onclick="closeModal('changePinModal')">&times;</button>
-            </div>
-            <form onsubmit="handleChangePin(event)">
-                <div class="field-group" style="margin-top:0;">
-                    <label class="field-label" for="currentPinInput">Current 4-Digit PIN</label>
-                    <input type="password" id="currentPinInput" class="text-input pin-setup-input" placeholder="••••" maxlength="4" pattern="\d{4}" inputmode="numeric" required>
-                </div>
-                <div class="form-grid-2">
-                    <div class="field-group">
-                        <label class="field-label" for="newPinInput">New 4-Digit PIN</label>
-                        <input type="password" id="newPinInput" class="text-input pin-setup-input" placeholder="••••" maxlength="4" pattern="\d{4}" inputmode="numeric" required>
-                    </div>
-                    <div class="field-group">
-                        <label class="field-label" for="confirmNewPinInput">Confirm New PIN</label>
-                        <input type="password" id="confirmNewPinInput" class="text-input pin-setup-input" placeholder="••••" maxlength="4" pattern="\d{4}" inputmode="numeric" required>
-                    </div>
-                </div>
-                <div class="auth-status" id="changePinStatus" style="margin-top:10px; margin-bottom:0; text-align:center;"></div>
-                <button type="submit" class="btn-submit" style="margin-top:14px;">Update PIN</button>
             </form>
         </div>
     </div>
@@ -2019,6 +2457,7 @@
             GoogleAuthProvider,
             signInWithPopup,
             sendPasswordResetEmail,
+            updateProfile,
             signOut
         } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
         import {
@@ -2033,7 +2472,7 @@
             onSnapshot
         } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
-        // Your Firebase configuration (papertrail-c5abf)
+        // Firebase configuration (papertrail-c5abf)
         const firebaseConfig = {
             apiKey: "AIzaSyAe4jB7DvE2BHdkfGDXfb6Q90s1qAOhCI0",
             authDomain: "papertrail-c5abf.firebaseapp.com",
@@ -2057,17 +2496,58 @@
             db = getFirestore(app);
         }
 
-        const CATEGORY_ICONS = {
-            'Groceries': '🛒',
-            'Dining': '🍽️',
-            'Fuel & Auto': '⛽',
-            'Shopping': '🛍️',
-            'Bills & Utilities': '🧾',
-            'Health & Fitness': '💪',
-            'Travel': '✈️',
-            'Entertainment': '🎬',
-            'Other': '📦'
+        // ==================== VECTOR SVG ICON LIBRARY (NO EMOJIS) ====================
+        const CATEGORIES = [
+            { id: 'Groceries', label: 'Groceries' },
+            { id: 'Dining', label: 'Dining' },
+            { id: 'Coffee & Snacks', label: 'Coffee & Snacks' },
+            { id: 'Fuel & Auto', label: 'Fuel & Auto' },
+            { id: 'Clothing', label: 'Clothing' },
+            { id: 'Shopping', label: 'Shopping' },
+            { id: 'Home & Living', label: 'Home & Living' },
+            { id: 'Bills & Utilities', label: 'Bills & Utilities' },
+            { id: 'Subscriptions', label: 'Subscriptions' },
+            { id: 'Health & Fitness', label: 'Health & Fitness' },
+            { id: 'Personal Care', label: 'Personal Care' },
+            { id: 'Travel', label: 'Travel' },
+            { id: 'Entertainment', label: 'Entertainment' },
+            { id: 'Gifts', label: 'Gifts' },
+            { id: 'Other', label: 'Other' }
+        ];
+
+        const CATEGORY_SVG_PATHS = {
+            'Groceries': '<circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>',
+            'Dining': '<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>',
+            'Coffee & Snacks': '<path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/>',
+            'Fuel & Auto': '<line x1="3" y1="22" x2="15" y2="22"/><line x1="4" y1="9" x2="14" y2="9"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"/>',
+            'Clothing': '<path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/>',
+            'Shopping': '<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>',
+            'Home & Living': '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+            'Bills & Utilities': '<path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/>',
+            'Subscriptions': '<path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/>',
+            'Health & Fitness': '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/>',
+            'Personal Care': '<path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/>',
+            'Travel': '<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>',
+            'Entertainment': '<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/>',
+            'Gifts': '<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/>',
+            'Other': '<path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><path d="m3.3 7 7.703 4.734a2 2 0 0 0 1.994 0L20.7 7"/>'
         };
+
+        const UI_SVGS = {
+            sun: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>',
+            moon: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>',
+            cloudOk: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/><path d="m9 15 2 2 4-4"/></svg>',
+            cloudSync: '<svg class="spin-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>',
+            cloudOff: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 2 20 20"/><path d="M5.782 5.782A7 7 0 0 0 9 19h8.5a4.5 4.5 0 0 0 1.307-.193"/><path d="M21.532 16.5A4.5 4.5 0 0 0 17.5 10h-1.79A7.008 7.008 0 0 0 10 5.07"/></svg>',
+            cameraSmall: '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>',
+            receiptEmpty: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/></svg>',
+            archiveEmpty: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg>'
+        };
+
+        function getCategorySvg(cat, size = 18) {
+            const inner = CATEGORY_SVG_PATHS[cat] || CATEGORY_SVG_PATHS['Other'];
+            return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
+        }
 
         function createDefaultState() {
             return {
@@ -2075,7 +2555,7 @@
                     cycleMode: 'monthly',
                     weekStartsOn: 0,
                     budgetTarget: 0,
-                    autoLockMinutes: 5
+                    theme: localStorage.getItem('papertrail_theme') || 'dark'
                 },
                 activeCycleKey: '',
                 activeCycleLabel: '',
@@ -2090,45 +2570,137 @@
         let currentUser = null;
         let unsubscribeState = null;
         let state = createDefaultState();
-        let receiptCache = {}; // Local memory + localStorage map: { [expenseId]: dataUrl }
+        let receiptCache = {};
+        let userDisplayName = '';
 
         let activeCategoryFilter = 'ALL';
         let pendingReceiptDataUrl = null;
         let authFormMode = 'signin';
 
-        // PIN & Lock State
-        let enteredPin = '';
-        let failedAttempts = 0;
-        let lockCooldownUntil = 0;
-        let inactivityTimer = null;
+        // ==================== CUSTOM CATEGORY PICKER INIT ====================
+        function initCategoryPicker() {
+            const grid = document.getElementById('catPickerGrid');
+            if (!grid) return;
+
+            grid.innerHTML = CATEGORIES.map(cat => `
+                <button type="button" class="cat-picker-item" data-cat="${escapeAttr(cat.id)}" onclick="selectExpenseCategory('${escapeAttr(cat.id)}')">
+                    ${getCategorySvg(cat.id, 15)}
+                    <span>${escapeHtml(cat.label)}</span>
+                </button>
+            `).join('');
+
+            selectExpenseCategory('Groceries');
+        }
+
+        function toggleCategoryPicker() {
+            const panel = document.getElementById('catPickerPanel');
+            const trigger = document.getElementById('catSelectTrigger');
+            const isOpen = panel.classList.toggle('open');
+            trigger.classList.toggle('open', isOpen);
+        }
+
+        function selectExpenseCategory(catId) {
+            const found = CATEGORIES.find(c => c.id === catId) || { id: catId, label: catId };
+            document.getElementById('expCategory').value = found.id;
+            document.getElementById('catTriggerIcon').innerHTML = getCategorySvg(found.id, 16);
+            document.getElementById('catTriggerLabel').innerText = found.label;
+
+            document.querySelectorAll('.cat-picker-item').forEach(btn => {
+                btn.classList.toggle('selected', btn.dataset.cat === found.id);
+            });
+
+            document.getElementById('catPickerPanel').classList.remove('open');
+            document.getElementById('catSelectTrigger').classList.remove('open');
+        }
+
+        initCategoryPicker();
 
         // ==================== STORAGE KEY HELPERS ====================
         function stateKeyFor(uid) { return `papertrail_v2_state_${uid}`; }
         function receiptsKeyFor(uid) { return `papertrail_v2_receipts_${uid}`; }
-        function pinKeyFor(uid) { return `papertrail_v2_pin_${uid}`; }
-        function sessionKeyFor(uid) { return `papertrail_v2_unlocked_${uid}`; }
+
+        // ==================== THEME MANAGEMENT ====================
+        function applyTheme(theme) {
+            const normalized = theme === 'light' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', normalized);
+            localStorage.setItem('papertrail_theme', normalized);
+
+            const meta = document.getElementById('metaThemeColor');
+            if (meta) {
+                meta.setAttribute('content', normalized === 'light' ? '#f5f7fa' : '#0c1017');
+            }
+
+            const nextIcon = normalized === 'light' ? UI_SVGS.moon : UI_SVGS.sun;
+            const quickIcon = document.getElementById('quickThemeIcon');
+            if (quickIcon) quickIcon.innerHTML = nextIcon;
+
+            const sideIcon = document.getElementById('sidebarThemeIcon');
+            const sideLabel = document.getElementById('sidebarThemeLabel');
+            if (sideIcon) sideIcon.innerHTML = nextIcon;
+            if (sideLabel) sideLabel.innerText = normalized === 'light' ? 'Dark Theme' : 'White Theme';
+
+            const btnDark = document.getElementById('btnThemeDark');
+            const btnLight = document.getElementById('btnThemeLight');
+            if (btnDark && btnLight) {
+                btnDark.classList.toggle('active', normalized === 'dark');
+                btnLight.classList.toggle('active', normalized === 'light');
+            }
+        }
+
+        function updateTheme(newTheme) {
+            const normalized = newTheme === 'light' ? 'light' : 'dark';
+            state.settings.theme = normalized;
+            applyTheme(normalized);
+            syncStateToCloud();
+        }
+
+        function toggleThemeQuick() {
+            const current = document.documentElement.getAttribute('data-theme') || 'dark';
+            updateTheme(current === 'light' ? 'dark' : 'light');
+        }
+
+        applyTheme(localStorage.getItem('papertrail_theme') || 'dark');
 
         // ==================== SYNC STATUS INDICATOR ====================
         function setSyncIndicator(status) {
             const pill = document.getElementById('syncStatusPill');
             const icon = document.getElementById('syncStatusIcon');
             const text = document.getElementById('syncStatusText');
-            if (!pill) return;
+            const sideIcon = document.getElementById('sidebarSyncIcon');
+            const sideText = document.getElementById('sidebarSyncText');
 
-            pill.classList.remove('syncing', 'offline');
+            if (pill) pill.classList.remove('syncing', 'offline');
+
             if (!navigator.onLine || status === 'offline') {
-                pill.classList.add('offline');
-                icon.innerText = '📴';
-                text.innerText = 'Offline';
+                if (pill) pill.classList.add('offline');
+                if (icon) icon.innerHTML = UI_SVGS.cloudOff;
+                if (text) text.innerText = 'Offline';
+                if (sideIcon) {
+                    sideIcon.innerHTML = UI_SVGS.cloudOff;
+                    sideIcon.style.color = 'var(--warning)';
+                }
+                if (sideText) sideText.innerText = 'Offline Mode';
             } else if (status === 'syncing') {
-                pill.classList.add('syncing');
-                icon.innerText = '🔄';
-                text.innerText = 'Syncing';
+                if (pill) pill.classList.add('syncing');
+                if (icon) icon.innerHTML = UI_SVGS.cloudSync;
+                if (text) text.innerText = 'Syncing';
+                if (sideIcon) {
+                    sideIcon.innerHTML = UI_SVGS.cloudSync;
+                    sideIcon.style.color = 'var(--cyan)';
+                }
+                if (sideText) sideText.innerText = 'Syncing Vault';
             } else {
-                icon.innerText = '☁️';
-                text.innerText = 'Synced';
+                if (icon) icon.innerHTML = UI_SVGS.cloudOk;
+                if (text) text.innerText = 'Synced';
+                if (sideIcon) {
+                    sideIcon.innerHTML = UI_SVGS.cloudOk;
+                    sideIcon.style.color = 'var(--mint)';
+                }
+                if (sideText) sideText.innerText = 'Cloud Synced';
             }
         }
+
+        setSyncIndicator('synced');
 
         window.addEventListener('online', () => {
             setSyncIndicator('syncing');
@@ -2136,93 +2708,33 @@
         });
         window.addEventListener('offline', () => setSyncIndicator('offline'));
 
-        // ==================== CRYPTO & PIN HASHING ====================
-        async function hashPinWithSalt(pin, salt) {
-            const payload = `${salt}::PaperTrail::${pin}`;
-            if (window.crypto && window.crypto.subtle) {
-                const encoded = new TextEncoder().encode(payload);
-                const digest = await window.crypto.subtle.digest('SHA-256', encoded);
-                return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
-            }
-            let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
-            for (let i = 0; i < payload.length; i++) {
-                const ch = payload.charCodeAt(i);
-                h1 = Math.imul(h1 ^ ch, 2654435761);
-                h2 = Math.imul(h2 ^ ch, 1597334677);
-            }
-            h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
-            h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
-            return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(16);
-        }
-
-        function generateSalt() {
-            const arr = new Uint8Array(12);
-            if (window.crypto && window.crypto.getRandomValues) {
-                window.crypto.getRandomValues(arr);
-            } else {
-                for (let i = 0; i < arr.length; i++) arr[i] = Math.floor(Math.random() * 256);
-            }
-            return Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        function getLocalPinProfile(uid) {
-            try {
-                const raw = localStorage.getItem(pinKeyFor(uid));
-                return raw ? JSON.parse(raw) : null;
-            } catch {
-                return null;
-            }
-        }
-
-        function saveLocalPinProfile(uid, profile) {
-            localStorage.setItem(pinKeyFor(uid), JSON.stringify(profile));
-        }
-
         // ==================== FIREBASE AUTH FLOW ====================
         function showAuthScreen(mode) {
             const overlay = document.getElementById('authOverlay');
             const loadingView = document.getElementById('authLoadingView');
             const accountView = document.getElementById('authAccountView');
-            const setupView = document.getElementById('authSetupView');
-            const unlockView = document.getElementById('authUnlockView');
 
             document.body.classList.add('locked');
             overlay.classList.remove('hidden');
 
             loadingView.style.display = mode === 'loading' ? 'block' : 'none';
             accountView.style.display = mode === 'account' ? 'block' : 'none';
-            setupView.style.display = mode === 'setup' ? 'block' : 'none';
-            unlockView.style.display = mode === 'unlock' ? 'block' : 'none';
-
-            enteredPin = '';
-            updatePinDots();
 
             if (mode === 'loading') {
                 document.getElementById('authBadgeText').innerText = 'Connecting Cloud Vault';
             } else if (mode === 'account') {
                 document.getElementById('authBadgeText').innerText = 'Cloud Vault Login';
                 document.getElementById('accountStatus').innerText = '';
-            } else if (mode === 'setup') {
-                document.getElementById('authBadgeText').innerText = 'Set Quick-Lock PIN';
-                document.getElementById('setupStatus').innerText = '';
-                const defaultName = (currentUser && currentUser.displayName)
-                    ? currentUser.displayName.split(' ')[0]
-                    : '';
-                if (defaultName && !document.getElementById('setupNameInput').value) {
-                    document.getElementById('setupNameInput').value = defaultName;
-                }
-                setTimeout(() => document.getElementById('setupNameInput').focus(), 100);
-            } else if (mode === 'unlock') {
-                document.getElementById('authBadgeText').innerText = 'Vault Locked';
-                const pinProfile = currentUser ? getLocalPinProfile(currentUser.uid) : null;
-                const firstName = (pinProfile && pinProfile.name) ? pinProfile.name.split(' ')[0] : '';
-                document.getElementById('unlockGreeting').innerHTML = firstName
-                    ? `Welcome back, <span>${escapeHtml(firstName)}</span>`
-                    : `Paper<span>Trail</span>`;
-                document.getElementById('unlockSubEmail').innerText = currentUser
-                    ? `${currentUser.email} • Enter 4-digit PIN`
-                    : 'Enter your 4-digit PIN to open PaperTrail';
-                document.getElementById('unlockStatus').innerText = '';
+            }
+        }
+
+        function unlockAppUI(animate = true) {
+            const overlay = document.getElementById('authOverlay');
+            if (!animate) overlay.style.transition = 'none';
+            overlay.classList.add('hidden');
+            document.body.classList.remove('locked');
+            if (!animate) {
+                requestAnimationFrame(() => { overlay.style.transition = ''; });
             }
         }
 
@@ -2317,14 +2829,9 @@
                 unsubscribeState();
                 unsubscribeState = null;
             }
-            if (currentUser) {
-                sessionStorage.removeItem(sessionKeyFor(currentUser.uid));
-            }
-            clearTimeout(inactivityTimer);
             await signOut(auth);
         }
 
-        // Listen for Firebase Authentication state changes
         onAuthStateChanged(auth, async (user) => {
             if (unsubscribeState) {
                 unsubscribeState();
@@ -2333,6 +2840,7 @@
 
             if (!user) {
                 currentUser = null;
+                userDisplayName = '';
                 state = createDefaultState();
                 receiptCache = {};
                 showAuthScreen('account');
@@ -2340,239 +2848,27 @@
             }
 
             currentUser = user;
-            document.getElementById('settingsAccountEmail').innerText = user.email || 'Signed-in User';
+            userDisplayName = user.displayName || (user.email ? user.email.split('@')[0] : 'PaperTrail User');
 
-            // 1. Load local device cache immediately for zero-latency boot
             loadLocalDeviceCache(user.uid);
+            applyTheme(state.settings.theme || localStorage.getItem('papertrail_theme') || 'dark');
             renderDashboard();
+            renderProfile();
 
-            // 2. Start real-time Firestore listener for cross-device sync
+            unlockAppUI(false);
             startRealtimeCloudSync(user.uid);
 
-            // 3. Check local + cloud PIN profile
-            let pinProfile = getLocalPinProfile(user.uid);
-            if (!pinProfile && navigator.onLine) {
+            if (navigator.onLine) {
                 try {
                     const profileSnap = await getDoc(doc(db, 'users', user.uid, 'meta', 'profile'));
-                    if (profileSnap.exists() && profileSnap.data().pinHash) {
-                        const d = profileSnap.data();
-                        pinProfile = { name: d.name || '', salt: d.pinSalt, hash: d.pinHash };
-                        saveLocalPinProfile(user.uid, pinProfile);
+                    if (profileSnap.exists() && profileSnap.data().name) {
+                        userDisplayName = profileSnap.data().name;
+                        renderProfile();
                     }
                 } catch (err) {
-                    console.warn('Could not fetch cloud PIN profile:', err);
+                    console.warn('Could not fetch cloud profile:', err);
                 }
             }
-
-            if (!pinProfile) {
-                showAuthScreen('setup');
-            } else if (sessionStorage.getItem(sessionKeyFor(user.uid)) === 'true') {
-                unlockAppUI(false);
-            } else {
-                showAuthScreen('unlock');
-            }
-        });
-
-        // ==================== PIN SETUP & UNLOCK ====================
-        async function handleVaultSetup(e) {
-            e.preventDefault();
-            if (!currentUser) return;
-
-            const name = document.getElementById('setupNameInput').value.trim();
-            const pin = document.getElementById('setupPinInput').value.trim();
-            const confirmPin = document.getElementById('setupPinConfirm').value.trim();
-            const statusEl = document.getElementById('setupStatus');
-
-            if (!name) { statusEl.innerText = 'Please enter your name.'; return; }
-            if (!/^\d{4}$/.test(pin)) { statusEl.innerText = 'PIN must be exactly 4 digits.'; return; }
-            if (pin !== confirmPin) { statusEl.innerText = 'PINs do not match. Try again.'; return; }
-
-            const salt = generateSalt();
-            const hash = await hashPinWithSalt(pin, salt);
-            const profile = { name, salt, hash };
-
-            saveLocalPinProfile(currentUser.uid, profile);
-
-            // Mirror PIN hash to user's private Firestore profile so new devices inherit it
-            setDoc(doc(db, 'users', currentUser.uid, 'meta', 'profile'), {
-                name,
-                email: currentUser.email || '',
-                pinSalt: salt,
-                pinHash: hash,
-                updatedAt: Date.now()
-            }, { merge: true }).catch(err => console.warn('Cloud profile sync queued:', err));
-
-            unlockAppUI(true);
-        }
-
-        function pressPinDigit(digit) {
-            const overlay = document.getElementById('authOverlay');
-            const unlockView = document.getElementById('authUnlockView');
-            if (overlay.classList.contains('hidden') || unlockView.style.display === 'none') return;
-
-            const now = Date.now();
-            if (now < lockCooldownUntil) {
-                const secs = Math.ceil((lockCooldownUntil - now) / 1000);
-                document.getElementById('unlockStatus').innerText = `Too many attempts. Wait ${secs}s...`;
-                return;
-            }
-
-            if (enteredPin.length >= 4) return;
-            enteredPin += digit;
-            document.getElementById('unlockStatus').innerText = '';
-            updatePinDots();
-
-            if (enteredPin.length === 4) {
-                setTimeout(verifyEnteredPin, 90);
-            }
-        }
-
-        function backspacePinDigit() {
-            if (enteredPin.length === 0) return;
-            enteredPin = enteredPin.slice(0, -1);
-            updatePinDots();
-        }
-
-        function clearPinEntry() {
-            enteredPin = '';
-            document.getElementById('unlockStatus').innerText = '';
-            updatePinDots();
-        }
-
-        function updatePinDots(isError = false) {
-            const dotsWrap = document.getElementById('pinDots');
-            const dots = dotsWrap.querySelectorAll('.pin-dot');
-            dotsWrap.classList.toggle('error', isError);
-            dots.forEach((dot, idx) => {
-                dot.classList.toggle('filled', idx < enteredPin.length);
-            });
-        }
-
-        async function verifyEnteredPin() {
-            if (!currentUser) return;
-            const pinProfile = getLocalPinProfile(currentUser.uid);
-            if (!pinProfile) return;
-
-            const candidateHash = await hashPinWithSalt(enteredPin, pinProfile.salt);
-            if (candidateHash === pinProfile.hash) {
-                failedAttempts = 0;
-                enteredPin = '';
-                unlockAppUI(true);
-            } else {
-                failedAttempts++;
-                updatePinDots(true);
-                const dotsWrap = document.getElementById('pinDots');
-                dotsWrap.classList.remove('shake');
-                void dotsWrap.offsetWidth;
-                dotsWrap.classList.add('shake');
-
-                if (failedAttempts >= 5) {
-                    lockCooldownUntil = Date.now() + 15000;
-                    document.getElementById('unlockStatus').innerText = '5 failed attempts. Locked for 15 seconds.';
-                } else {
-                    document.getElementById('unlockStatus').innerText = `Incorrect PIN (${5 - failedAttempts} tries left)`;
-                }
-
-                setTimeout(() => {
-                    enteredPin = '';
-                    updatePinDots(false);
-                }, 420);
-            }
-        }
-
-        function unlockAppUI(animate = true) {
-            if (currentUser) {
-                sessionStorage.setItem(sessionKeyFor(currentUser.uid), 'true');
-            }
-            const overlay = document.getElementById('authOverlay');
-            if (!animate) overlay.style.transition = 'none';
-            overlay.classList.add('hidden');
-            document.body.classList.remove('locked');
-            if (!animate) {
-                requestAnimationFrame(() => { overlay.style.transition = ''; });
-            }
-            resetInactivityTimer();
-        }
-
-        function lockApp() {
-            if (currentUser) {
-                sessionStorage.removeItem(sessionKeyFor(currentUser.uid));
-            }
-            clearTimeout(inactivityTimer);
-            closeModal('expenseModal');
-            closeModal('receiptViewerModal');
-            closeModal('changePinModal');
-            showAuthScreen('unlock');
-        }
-
-        function resetVaultCredentials() {
-            if (!currentUser) return;
-            if (!confirm('Reset your 4-digit PIN? Your cloud-synced expenses will remain intact, and you will set a new PIN.')) return;
-            localStorage.removeItem(pinKeyFor(currentUser.uid));
-            sessionStorage.removeItem(sessionKeyFor(currentUser.uid));
-            showAuthScreen('setup');
-        }
-
-        function openChangePinModal() {
-            document.getElementById('currentPinInput').value = '';
-            document.getElementById('newPinInput').value = '';
-            document.getElementById('confirmNewPinInput').value = '';
-            document.getElementById('changePinStatus').innerText = '';
-            document.getElementById('changePinModal').classList.add('open');
-        }
-
-        async function handleChangePin(e) {
-            e.preventDefault();
-            if (!currentUser) return;
-            const pinProfile = getLocalPinProfile(currentUser.uid);
-            if (!pinProfile) return;
-
-            const curr = document.getElementById('currentPinInput').value.trim();
-            const next = document.getElementById('newPinInput').value.trim();
-            const conf = document.getElementById('confirmNewPinInput').value.trim();
-            const status = document.getElementById('changePinStatus');
-
-            const currHash = await hashPinWithSalt(curr, pinProfile.salt);
-            if (currHash !== pinProfile.hash) { status.innerText = 'Current PIN is incorrect.'; return; }
-            if (!/^\d{4}$/.test(next)) { status.innerText = 'New PIN must be 4 digits.'; return; }
-            if (next !== conf) { status.innerText = 'New PINs do not match.'; return; }
-
-            const newSalt = generateSalt();
-            const newHash = await hashPinWithSalt(next, newSalt);
-            saveLocalPinProfile(currentUser.uid, { ...pinProfile, salt: newSalt, hash: newHash });
-
-            setDoc(doc(db, 'users', currentUser.uid, 'meta', 'profile'), {
-                pinSalt: newSalt,
-                pinHash: newHash,
-                updatedAt: Date.now()
-            }, { merge: true }).catch(err => console.warn('Cloud PIN update queued:', err));
-
-            closeModal('changePinModal');
-            alert('Vault PIN updated and synced.');
-        }
-
-        function resetInactivityTimer() {
-            clearTimeout(inactivityTimer);
-            const mins = Number(state.settings.autoLockMinutes || 0);
-            if (mins > 0 && !document.body.classList.contains('locked')) {
-                inactivityTimer = setTimeout(() => lockApp(), mins * 60 * 1000);
-            }
-        }
-
-        document.addEventListener('keydown', (e) => {
-            const overlay = document.getElementById('authOverlay');
-            const unlockView = document.getElementById('authUnlockView');
-            if (!overlay.classList.contains('hidden') && unlockView.style.display !== 'none') {
-                if (/^[0-9]$/.test(e.key)) { e.preventDefault(); pressPinDigit(e.key); }
-                else if (e.key === 'Backspace') { e.preventDefault(); backspacePinDigit(); }
-                else if (e.key === 'Escape') { e.preventDefault(); clearPinEntry(); }
-                return;
-            }
-            resetInactivityTimer();
-        });
-
-        ['pointerdown', 'touchstart'].forEach(evt => {
-            document.addEventListener(evt, resetInactivityTimer, { passive: true });
         });
 
         // ==================== LOCAL-FIRST + CLOUD SYNC ENGINE ====================
@@ -2614,7 +2910,6 @@
                 updateStorageMeter();
             } catch (err) {
                 console.warn('Local cache near capacity; pruning oldest cached receipt thumbnails:', err);
-                // Keep state safe by clearing oldest cached local receipt images (they remain safely in Firestore)
                 receiptCache = {};
                 try {
                     localStorage.setItem(receiptsKeyFor(currentUser.uid), '{}');
@@ -2631,7 +2926,6 @@
             saveLocalDeviceCache();
             setSyncIndicator('syncing');
 
-            // Strip heavy Base64 strings from main state doc (receipts live in dedicated sub-docs)
             const cleanActive = state.activeExpenses.map(({ receipt, ...rest }) => ({
                 ...rest,
                 hasReceipt: Boolean(rest.hasReceipt || receipt)
@@ -2670,7 +2964,6 @@
             const stateDocRef = doc(db, 'users', uid, 'meta', 'state');
             unsubscribeState = onSnapshot(stateDocRef, (snapshot) => {
                 if (!snapshot.exists()) {
-                    // First time this cloud account is used: push local state up to initialize Firestore
                     syncStateToCloud();
                     return;
                 }
@@ -2684,11 +2977,15 @@
                         ...cloudData,
                         settings: { ...state.settings, ...(cloudData.settings || {}) }
                     };
+                    if (state.settings.theme) {
+                        applyTheme(state.settings.theme);
+                    }
                     const rolled = checkAndRolloverCycle(false);
                     saveLocalDeviceCache();
                     renderDashboard();
                     if (document.getElementById('view-history').classList.contains('active')) renderHistory();
                     if (document.getElementById('view-settings').classList.contains('active')) renderSettings();
+                    if (document.getElementById('view-profile').classList.contains('active')) renderProfile();
                     if (rolled) syncStateToCloud();
                 }
 
@@ -2815,17 +3112,51 @@
         }
 
         // ==================== NAVIGATION ====================
+        const VIEW_HEADERS = {
+            dashboard: {
+                title: 'Active Trail',
+                sub: 'Monitor your active spending cycle, category breakdown, and receipts.',
+                actionHtml: `<button class="btn-secondary" style="min-width:auto; padding:9px 14px;" onclick="exportCSV('active')">Export Active CSV</button>`
+            },
+            history: {
+                title: 'Archived History',
+                sub: 'Inspect completed weeks and months or export full historical reports.',
+                actionHtml: `<button class="btn-secondary" style="min-width:auto; padding:9px 14px;" onclick="exportCSV('all')">Export Full History</button>`
+            },
+            settings: {
+                title: 'Settings',
+                sub: 'Configure theme preferences, weekly or monthly reset cycles, and backups.',
+                actionHtml: ''
+            },
+            profile: {
+                title: 'Account & Profile',
+                sub: 'Manage your display name, cloud sync status, and session.',
+                actionHtml: ''
+            }
+        };
+
         function switchView(viewName) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('[data-nav]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.nav === viewName);
+            });
 
             document.getElementById(`view-${viewName}`).classList.add('active');
-            const tab = document.getElementById(`tab-${viewName}`);
-            if (tab) tab.classList.add('active');
+
+            const headerMeta = VIEW_HEADERS[viewName];
+            if (headerMeta) {
+                const titleEl = document.getElementById('desktopPageTitle');
+                const subEl = document.getElementById('desktopPageSubtitle');
+                const actEl = document.getElementById('desktopHeaderActions');
+                if (titleEl) titleEl.innerText = headerMeta.title;
+                if (subEl) subEl.innerText = headerMeta.sub;
+                if (actEl) actEl.innerHTML = headerMeta.actionHtml;
+            }
 
             if (viewName === 'dashboard') renderDashboard();
             if (viewName === 'history') renderHistory();
             if (viewName === 'settings') renderSettings();
+            if (viewName === 'profile') renderProfile();
         }
 
         // ==================== DASHBOARD RENDERING ====================
@@ -2843,7 +3174,6 @@
 
         function renderDashboard() {
             const isWeekly = state.settings.cycleMode === 'weekly';
-            document.getElementById('headerCycleLabel').innerText = isWeekly ? 'Weekly' : 'Monthly';
             document.getElementById('activeCycleBadge').innerText = isWeekly ? 'Current Weekly Trail' : 'Current Monthly Trail';
             document.getElementById('activeCycleDates').innerText = state.activeCycleLabel;
             document.getElementById('cycleCountdown').innerText = getDaysRemainingInCycle(state.activeCycleEnd);
@@ -2894,13 +3224,21 @@
             if (sortedCats.length === 0) {
                 catStrip.innerHTML = `<div style="font-size:12px; color:var(--text-muted); padding:6px 2px;">Categories appear automatically as you log expenses.</div>`;
             } else {
-                catStrip.innerHTML = sortedCats.map(([cat, amt]) => `
-                    <div class="cat-chip ${activeCategoryFilter === cat ? 'active' : ''}" onclick="setCategoryFilter('${escapeAttr(cat)}')">
-                        <span>${CATEGORY_ICONS[cat] || '📦'}</span>
-                        <span class="cat-chip-name">${escapeHtml(cat)}</span>
-                        <span class="cat-chip-amt">${formatMoney(amt)}</span>
-                    </div>
-                `).join('');
+                catStrip.innerHTML = sortedCats.map(([cat, amt]) => {
+                    const sharePct = total > 0 ? Math.round((amt / total) * 100) : 0;
+                    return `
+                        <div class="cat-chip ${activeCategoryFilter === cat ? 'active' : ''}" onclick="setCategoryFilter('${escapeAttr(cat)}')">
+                            <div class="cat-chip-left">
+                                <span class="cat-chip-icon">${getCategorySvg(cat, 15)}</span>
+                                <span class="cat-chip-name">${escapeHtml(cat)}</span>
+                            </div>
+                            <div class="cat-chip-right">
+                                <span class="cat-chip-pct">${sharePct}%</span>
+                                <span class="cat-chip-amt">${formatMoney(amt)}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
             }
 
             const query = (document.getElementById('searchInput').value || '').trim().toLowerCase();
@@ -2909,6 +3247,7 @@
                 const matchesSearch = !query ||
                     e.title.toLowerCase().includes(query) ||
                     e.category.toLowerCase().includes(query) ||
+                    e.payment.toLowerCase().includes(query) ||
                     (e.note && e.note.toLowerCase().includes(query));
                 return matchesCat && matchesSearch;
             });
@@ -2917,10 +3256,10 @@
             if (filtered.length === 0) {
                 listEl.innerHTML = `
                     <div class="empty-state">
-                        <div class="empty-state-icon">🧾</div>
+                        <div class="empty-state-icon">${UI_SVGS.receiptEmpty}</div>
                         <h3>${expenses.length === 0 ? 'No expenses logged this cycle' : 'No matching expenses'}</h3>
                         <p>${expenses.length === 0
-                            ? 'Tap "+ Log Expense" below to snap a receipt photo or record what you spent today.'
+                            ? 'Tap "Log Expense" to snap a receipt photo or record what you spent today.'
                             : 'Try clearing your search or category filter.'}</p>
                     </div>
                 `;
@@ -2933,7 +3272,7 @@
                 return `
                     <div class="expense-item">
                         <div class="exp-left">
-                            <div class="exp-icon">${CATEGORY_ICONS[item.category] || '📦'}</div>
+                            <div class="exp-icon">${getCategorySvg(item.category, 18)}</div>
                             <div class="exp-info">
                                 <div class="exp-title">${escapeHtml(item.title)}</div>
                                 <div class="exp-meta">
@@ -2942,7 +3281,7 @@
                                     <span>${escapeHtml(item.category)}</span>
                                     <span>•</span>
                                     <span>${escapeHtml(item.payment)}</span>
-                                    ${hasImg ? `<span class="badge-receipt" onclick="viewReceipt('${item.id}', 'active')">📷 Receipt</span>` : ''}
+                                    ${hasImg ? `<span class="badge-receipt" onclick="viewReceipt('${item.id}', 'active')">${UI_SVGS.cameraSmall} Receipt</span>` : ''}
                                 </div>
                                 ${item.note ? `<div class="exp-note">${escapeHtml(item.note)}</div>` : ''}
                             </div>
@@ -2975,7 +3314,7 @@
             if (state.history.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <div class="empty-state-icon">🗂️</div>
+                        <div class="empty-state-icon">${UI_SVGS.archiveEmpty}</div>
                         <h3>No Archived History Yet</h3>
                         <p>Once your current ${state.settings.cycleMode} cycle finishes, it will automatically be stored here for future review.</p>
                     </div>
@@ -3010,9 +3349,10 @@
                                 return `
                                     <div class="history-mini-item">
                                         <div>
-                                            <div style="font-weight:600; color:var(--text-main);">
-                                                ${CATEGORY_ICONS[item.category] || '📦'} ${escapeHtml(item.title)}
-                                                ${hasImg ? `<span class="badge-receipt" style="margin-left:6px;" onclick="viewReceipt('${item.id}', '${arc.id}')">📷 Receipt</span>` : ''}
+                                            <div class="mini-item-title-row">
+                                                <span class="mini-item-icon">${getCategorySvg(item.category, 14)}</span>
+                                                <span>${escapeHtml(item.title)}</span>
+                                                ${hasImg ? `<span class="badge-receipt" onclick="viewReceipt('${item.id}', '${arc.id}')">${UI_SVGS.cameraSmall} Receipt</span>` : ''}
                                             </div>
                                             <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">
                                                 ${item.date} • ${escapeHtml(item.category)} • ${escapeHtml(item.payment)}
@@ -3035,16 +3375,15 @@
 
         // ==================== SETTINGS RENDERING & ACTIONS ====================
         function renderSettings() {
+            const currentTheme = state.settings.theme || localStorage.getItem('papertrail_theme') || 'dark';
+            applyTheme(currentTheme);
+
             const isWeekly = state.settings.cycleMode === 'weekly';
             document.getElementById('btnModeWeekly').classList.toggle('active', isWeekly);
             document.getElementById('btnModeMonthly').classList.toggle('active', !isWeekly);
             document.getElementById('weekStartGroup').style.display = isWeekly ? 'block' : 'none';
             document.getElementById('weekStartSelect').value = String(state.settings.weekStartsOn);
             document.getElementById('budgetInput').value = state.settings.budgetTarget > 0 ? state.settings.budgetTarget : '';
-            document.getElementById('autoLockSelect').value = String(state.settings.autoLockMinutes ?? 5);
-            if (currentUser) {
-                document.getElementById('settingsAccountEmail').innerText = currentUser.email || 'Signed-in User';
-            }
             updateStorageMeter();
         }
 
@@ -3088,6 +3427,7 @@
             syncStateToCloud();
             renderSettings();
             renderDashboard();
+            renderProfile();
         }
 
         function updateWeekStart(val) {
@@ -3105,12 +3445,6 @@
             state.settings.budgetTarget = Math.max(0, Number(val) || 0);
             syncStateToCloud();
             renderDashboard();
-        }
-
-        function updateAutoLockMinutes(val) {
-            state.settings.autoLockMinutes = Number(val) || 0;
-            syncStateToCloud();
-            resetInactivityTimer();
         }
 
         function manualArchiveCurrent() {
@@ -3137,11 +3471,90 @@
             switchView('history');
         }
 
+        // ==================== PROFILE RENDERING & ACTIONS ====================
+        function getInitials(name, email) {
+            const src = (name || email || 'PT').trim();
+            const parts = src.split(/\s+/);
+            if (parts.length >= 2) {
+                return (parts[0][0] + parts[1][0]).toUpperCase();
+            }
+            return src.slice(0, 2).toUpperCase();
+        }
+
+        function renderProfile() {
+            if (!currentUser) return;
+
+            const displayName = userDisplayName || currentUser.displayName || (currentUser.email ? currentUser.email.split('@')[0] : 'PaperTrail User');
+            document.getElementById('profileDisplayName').innerText = displayName;
+            document.getElementById('profileAccountEmail').innerText = currentUser.email || 'Signed-in User';
+            document.getElementById('profileNameInput').value = displayName;
+
+            const avatarEl = document.getElementById('profileAvatar');
+            if (currentUser.photoURL) {
+                avatarEl.innerHTML = `<img src="${escapeAttr(currentUser.photoURL)}" alt="Profile Avatar">`;
+            } else {
+                avatarEl.innerText = getInitials(displayName, currentUser.email);
+            }
+
+            const providerId = (currentUser.providerData && currentUser.providerData[0])
+                ? currentUser.providerData[0].providerId
+                : 'password';
+            document.getElementById('profileProviderBadge').innerText =
+                providerId === 'google.com' ? 'Google Account' : 'Email & Password';
+
+            const isWeekly = state.settings.cycleMode === 'weekly';
+            document.getElementById('profileCycleMode').innerText = isWeekly ? 'Weekly' : 'Monthly';
+            document.getElementById('profileArchiveCount').innerText = state.history.length;
+
+            const activeReceipts = state.activeExpenses.filter(e => Boolean(e.hasReceipt || e.receipt || receiptCache[e.id])).length;
+            const archivedReceipts = state.history.reduce((sum, arc) => {
+                return sum + arc.items.filter(i => Boolean(i.hasReceipt || i.receipt || receiptCache[i.id])).length;
+            }, 0);
+            document.getElementById('profileTotalReceipts').innerText = activeReceipts + archivedReceipts;
+        }
+
+        async function saveDisplayName() {
+            if (!currentUser) return;
+            const newName = document.getElementById('profileNameInput').value.trim();
+            if (!newName) return;
+
+            userDisplayName = newName;
+            renderProfile();
+
+            try {
+                await updateProfile(currentUser, { displayName: newName });
+                await setDoc(doc(db, 'users', currentUser.uid, 'meta', 'profile'), {
+                    name: newName,
+                    email: currentUser.email || '',
+                    updatedAt: Date.now()
+                }, { merge: true });
+            } catch (err) {
+                console.warn('Could not update profile name in cloud:', err);
+            }
+        }
+
         // ==================== EXPENSE MODAL & RECEIPT CAMERA ====================
+        function handlePaymentChange(val) {
+            const group = document.getElementById('customPaymentGroup');
+            const customInput = document.getElementById('expCustomPayment');
+            if (!group || !customInput) return;
+
+            if (val === '__custom__') {
+                group.style.display = 'block';
+                customInput.required = true;
+                setTimeout(() => customInput.focus(), 50);
+            } else {
+                group.style.display = 'none';
+                customInput.required = false;
+                customInput.value = '';
+            }
+        }
+
         async function openExpenseModal(editId = null) {
             const form = document.getElementById('expenseForm');
             form.reset();
             clearReceiptImage();
+            handlePaymentChange('Apple Pay');
 
             if (editId) {
                 const item = state.activeExpenses.find(e => e.id === editId);
@@ -3151,9 +3564,22 @@
                 document.getElementById('editExpenseId').value = item.id;
                 document.getElementById('expAmount').value = item.amount;
                 document.getElementById('expTitle').value = item.title;
-                document.getElementById('expCategory').value = item.category;
+                selectExpenseCategory(item.category || 'Groceries');
                 document.getElementById('expDate').value = item.date;
-                document.getElementById('expPayment').value = item.payment;
+
+                const paymentSelect = document.getElementById('expPayment');
+                const hasPreset = Array.from(paymentSelect.options).some(
+                    opt => opt.value === item.payment && opt.value !== '__custom__'
+                );
+                if (hasPreset) {
+                    paymentSelect.value = item.payment;
+                    handlePaymentChange(item.payment);
+                } else {
+                    paymentSelect.value = '__custom__';
+                    handlePaymentChange('__custom__');
+                    document.getElementById('expCustomPayment').value = item.payment || '';
+                }
+
                 document.getElementById('expNote').value = item.note || '';
 
                 if (item.hasReceipt || item.receipt || receiptCache[item.id]) {
@@ -3168,6 +3594,7 @@
                 document.getElementById('modalHeading').innerText = 'Log Expense';
                 document.getElementById('saveExpenseBtn').innerText = 'Save & Sync to Trail';
                 document.getElementById('editExpenseId').value = '';
+                selectExpenseCategory('Groceries');
                 document.getElementById('expDate').value = toLocalDateStr(new Date());
             }
 
@@ -3229,9 +3656,11 @@
             const editId = document.getElementById('editExpenseId').value;
             const amount = parseFloat(document.getElementById('expAmount').value);
             const title = document.getElementById('expTitle').value.trim();
-            const category = document.getElementById('expCategory').value;
+            const category = document.getElementById('expCategory').value || 'Other';
             const date = document.getElementById('expDate').value;
-            const payment = document.getElementById('expPayment').value;
+            const rawPayment = document.getElementById('expPayment').value;
+            const customPayment = document.getElementById('expCustomPayment').value.trim();
+            const payment = rawPayment === '__custom__' ? (customPayment || 'Custom') : rawPayment;
             const note = document.getElementById('expNote').value.trim();
 
             if (isNaN(amount) || amount <= 0 || !title) return;
@@ -3241,7 +3670,6 @@
 
             if (hasReceipt) {
                 receiptCache[expenseId] = pendingReceiptDataUrl;
-                // Upload receipt image to its own Firestore sub-document
                 setDoc(doc(db, 'users', currentUser.uid, 'receipts', expenseId), {
                     dataUrl: pendingReceiptDataUrl,
                     updatedAt: Date.now()
@@ -3434,7 +3862,9 @@
         async function clearAllData() {
             if (!currentUser) return;
             if (!confirm('Erase all active expenses and archived history from both this device and your cloud vault? This cannot be undone.')) return;
+            const preservedTheme = state.settings.theme;
             state = createDefaultState();
+            state.settings.theme = preservedTheme;
             receiptCache = {};
             checkAndRolloverCycle(false);
             saveLocalDeviceCache();
@@ -3458,7 +3888,6 @@
         // Expose functions to global window for HTML inline handlers
         Object.assign(window, {
             switchView,
-            lockApp,
             dismissRolloverBanner,
             exportCSV,
             setCategoryFilter,
@@ -3467,12 +3896,16 @@
             updateCycleMode,
             updateWeekStart,
             updateBudgetTarget,
-            updateAutoLockMinutes,
-            openChangePinModal,
+            updateTheme,
+            toggleThemeQuick,
+            saveDisplayName,
             manualArchiveCurrent,
             downloadBackupJSON,
             clearAllData,
             openExpenseModal,
+            toggleCategoryPicker,
+            selectExpenseCategory,
+            handlePaymentChange,
             closeModal,
             handleBackdropClose,
             handleReceiptFile,
@@ -3480,12 +3913,6 @@
             saveExpense,
             deleteExpense,
             viewReceipt,
-            handleChangePin,
-            handleVaultSetup,
-            pressPinDigit,
-            clearPinEntry,
-            backspacePinDigit,
-            resetVaultCredentials,
             switchAuthTab,
             handleEmailAuth,
             handleGoogleSignIn,
