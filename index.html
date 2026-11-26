@@ -142,6 +142,20 @@
             animation: spin 1s linear infinite;
         }
 
+        @keyframes aiHighlight {
+            0% {
+                box-shadow: 0 0 0 3px rgba(58, 161, 130, 0.35);
+                border-color: var(--mint);
+            }
+            100% {
+                box-shadow: none;
+            }
+        }
+
+        .ai-autofilled {
+            animation: aiHighlight 1.4s ease-out;
+        }
+
         /* ==================== LOGIN / CLOUD VAULT OVERLAY ==================== */
         .auth-overlay {
             position: fixed;
@@ -1202,6 +1216,7 @@
             font-size: 14px;
             font-family: inherit;
             outline: none;
+            transition: border-color 0.2s ease;
         }
 
         .text-input:focus, .select-input:focus {
@@ -1802,13 +1817,36 @@
             gap: 10px;
         }
 
-        /* Receipt Capture Zone */
+        /* Receipt Capture & AI Scanner Zone */
         .receipt-zone {
             background: var(--bg-input);
-            border: 1px dashed var(--border-strong);
+            border: 1px dashed var(--accent-border);
             border-radius: var(--radius-md);
-            padding: 14px;
-            margin-top: 12px;
+            padding: 13px;
+            margin-bottom: 14px;
+        }
+
+        .receipt-zone-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 9px;
+        }
+
+        .ai-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--mint);
+            background: var(--accent-soft);
+            border: 1px solid var(--accent-border);
+            padding: 2px 8px;
+            border-radius: 999px;
         }
 
         .receipt-actions {
@@ -1825,16 +1863,48 @@
             background: var(--bg-card);
             border: 1px solid var(--border-strong);
             color: var(--text-main);
-            padding: 11px;
+            padding: 11px 10px;
             border-radius: var(--radius-sm);
             font-size: 13px;
             font-weight: 600;
+            font-family: inherit;
             cursor: pointer;
-            transition: border-color 0.2s ease;
+            transition: border-color 0.2s ease, background 0.2s ease;
         }
 
         .cam-btn:hover {
             border-color: var(--mint);
+            background: var(--bg-card-hover);
+        }
+
+        /* Live Desktop Webcam Viewfinder */
+        .live-camera-wrap {
+            display: none;
+            margin-top: 12px;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            border: 1px solid var(--accent-border);
+            background: #070a0f;
+            position: relative;
+        }
+
+        .live-camera-wrap.active {
+            display: block;
+        }
+
+        .live-camera-video {
+            width: 100%;
+            max-height: 240px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .live-camera-controls {
+            display: flex;
+            gap: 8px;
+            padding: 10px;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
         }
 
         .receipt-preview-wrap {
@@ -1849,17 +1919,34 @@
 
         .receipt-preview-img {
             width: 100%;
-            max-height: 210px;
+            max-height: 190px;
             object-fit: cover;
             border-radius: var(--radius-sm);
             border: 1px solid var(--border-strong);
+            display: block;
         }
 
-        .remove-receipt-btn {
+        .preview-overlay-actions {
             position: absolute;
             top: 8px;
             right: 8px;
-            background: rgba(12, 16, 23, 0.85);
+            display: flex;
+            gap: 6px;
+        }
+
+        .rescan-receipt-btn {
+            background: rgba(12, 16, 23, 0.88);
+            color: #6ee7b7;
+            border: 1px solid rgba(58, 161, 130, 0.5);
+            border-radius: 8px;
+            padding: 5px 10px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .remove-receipt-btn {
+            background: rgba(12, 16, 23, 0.88);
             color: #f28b9c;
             border: 1px solid rgba(224, 82, 104, 0.45);
             border-radius: 8px;
@@ -1867,6 +1954,44 @@
             font-size: 11px;
             font-weight: 700;
             cursor: pointer;
+        }
+
+        .scan-status-banner {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 10px;
+            padding: 9px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            background: var(--icon-bg);
+            border: 1px solid var(--icon-border);
+            color: var(--cyan);
+        }
+
+        .scan-status-banner.show {
+            display: flex;
+        }
+
+        .scan-status-banner.success {
+            background: var(--accent-soft);
+            border-color: var(--accent-border);
+            color: var(--mint);
+        }
+
+        .scan-status-banner.error {
+            background: rgba(217, 155, 56, 0.12);
+            border-color: rgba(217, 155, 56, 0.3);
+            color: var(--warning);
+        }
+
+        .scan-status-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
         }
 
         .btn-submit {
@@ -2342,6 +2467,67 @@
             <form id="expenseForm" onsubmit="saveExpense(event)">
                 <input type="hidden" id="editExpenseId">
 
+                <!-- Smart AI Receipt Scanner -->
+                <div class="receipt-zone">
+                    <div class="receipt-zone-head">
+                        <label class="field-label" style="margin-bottom:0;">Receipt Scanner</label>
+                        <span class="ai-pill">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/>
+                            </svg>
+                            AI Auto-Fill
+                        </span>
+                    </div>
+
+                    <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none;" onchange="handleReceiptFile(this)">
+                    <input type="file" id="galleryInput" accept="image/*" style="display:none;" onchange="handleReceiptFile(this)">
+
+                    <div class="receipt-actions">
+                        <button type="button" class="cam-btn" onclick="triggerCameraScan()">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--mint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+                                <circle cx="12" cy="13" r="4"/>
+                            </svg>
+                            Scan with Camera
+                        </button>
+                        <button type="button" class="cam-btn" onclick="triggerGalleryUpload()">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <circle cx="8.5" cy="8.5" r="1.5"/>
+                                <polyline points="21 15 16 10 5 21"/>
+                            </svg>
+                            Upload Receipt
+                        </button>
+                    </div>
+
+                    <!-- Live Webcam Viewfinder (Desktop / Laptop Camera Scan) -->
+                    <div class="live-camera-wrap" id="liveCameraWrap">
+                        <video id="liveCameraVideo" class="live-camera-video" autoplay playsinline muted></video>
+                        <div class="live-camera-controls">
+                            <button type="button" class="btn-submit" style="margin-top:0; padding:10px 14px; font-size:13px;" onclick="captureFromLiveCamera()">Snap &amp; Auto-Fill</button>
+                            <button type="button" class="btn-secondary" style="flex:none; min-width:auto; padding:10px 14px;" onclick="stopCameraStream()">Cancel</button>
+                        </div>
+                    </div>
+
+                    <!-- Receipt Preview -->
+                    <div class="receipt-preview-wrap" id="receiptPreviewWrap">
+                        <img id="receiptPreviewImg" class="receipt-preview-img" alt="Receipt Preview">
+                        <div class="preview-overlay-actions">
+                            <button type="button" class="rescan-receipt-btn" onclick="rescanCurrentReceipt()">Re-scan</button>
+                            <button type="button" class="remove-receipt-btn" onclick="clearReceiptImage()">Remove</button>
+                        </div>
+                    </div>
+
+                    <!-- AI Extraction Status Banner -->
+                    <div class="scan-status-banner" id="scanStatusBanner">
+                        <div class="scan-status-left">
+                            <span id="scanStatusIcon" style="display:inline-flex; flex-shrink:0;"></span>
+                            <span id="scanStatusText">Scanning receipt...</span>
+                        </div>
+                        <button type="button" id="scanRetryBtn" class="text-action" style="display:none; color:inherit; text-decoration:underline;" onclick="rescanCurrentReceipt()">Retry</button>
+                    </div>
+                </div>
+
                 <div class="amount-box">
                     <span class="currency-prefix">$</span>
                     <input type="number" id="expAmount" class="amount-input" placeholder="0.00" step="0.01" min="0.01" inputmode="decimal" required>
@@ -2408,37 +2594,7 @@
                     <input type="text" id="expCustomPayment" class="text-input" placeholder="e.g. Amex Gold, Business Card, Store Credit...">
                 </div>
 
-                <!-- Camera / Receipt Photo Capture -->
-                <div class="receipt-zone">
-                    <label class="field-label" style="margin-bottom:8px;">Receipt Photo (Optional)</label>
-                    <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none;" onchange="handleReceiptFile(this)">
-                    <input type="file" id="galleryInput" accept="image/*" style="display:none;" onchange="handleReceiptFile(this)">
-
-                    <div class="receipt-actions">
-                        <button type="button" class="cam-btn" onclick="document.getElementById('cameraInput').click()">
-                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--mint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
-                                <circle cx="12" cy="13" r="4"/>
-                            </svg>
-                            Take Photo
-                        </button>
-                        <button type="button" class="cam-btn" onclick="document.getElementById('galleryInput').click()">
-                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                                <circle cx="8.5" cy="8.5" r="1.5"/>
-                                <polyline points="21 15 16 10 5 21"/>
-                            </svg>
-                            Upload Receipt
-                        </button>
-                    </div>
-
-                    <div class="receipt-preview-wrap" id="receiptPreviewWrap">
-                        <img id="receiptPreviewImg" class="receipt-preview-img" alt="Receipt Preview">
-                        <button type="button" class="remove-receipt-btn" onclick="clearReceiptImage()">Remove</button>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn-submit" id="saveExpenseBtn">Save & Sync to Trail</button>
+                <button type="submit" class="btn-submit" id="saveExpenseBtn">Save &amp; Sync to Trail</button>
             </form>
         </div>
     </div>
@@ -2552,7 +2708,9 @@
             cloudOff: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 2 20 20"/><path d="M5.782 5.782A7 7 0 0 0 9 19h8.5a4.5 4.5 0 0 0 1.307-.193"/><path d="M21.532 16.5A4.5 4.5 0 0 0 17.5 10h-1.79A7.008 7.008 0 0 0 10 5.07"/></svg>',
             cameraSmall: '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>',
             receiptEmpty: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/></svg>',
-            archiveEmpty: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg>'
+            archiveEmpty: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg>',
+            checkCircle: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+            alertTriangle: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
         };
 
         function getCategorySvg(cat, size = 18) {
@@ -2587,6 +2745,8 @@
         let activeCategoryFilter = 'ALL';
         let pendingReceiptDataUrl = null;
         let authFormMode = 'signin';
+        let activeCameraStream = null;
+        let activeScanAbortController = null;
 
         // ==================== CUSTOM CATEGORY PICKER INIT ====================
         function initCategoryPicker() {
@@ -3320,7 +3480,7 @@
                         <div class="empty-state-icon">${UI_SVGS.receiptEmpty}</div>
                         <h3>${expenses.length === 0 ? 'No expenses logged this cycle' : 'No matching expenses'}</h3>
                         <p>${expenses.length === 0
-                            ? 'Tap "Log Expense" to snap a receipt photo or record what you spent today.'
+                            ? 'Tap "Log Expense" to scan a receipt with AI or record what you spent today.'
                             : 'Try clearing your search or category filter.'}</p>
                     </div>
                 `;
@@ -3594,7 +3754,7 @@
             }
         }
 
-        // ==================== EXPENSE MODAL & RECEIPT CAMERA ====================
+        // ==================== EXPENSE MODAL & AI RECEIPT SCANNER ====================
         function handlePaymentChange(val) {
             const group = document.getElementById('customPaymentGroup');
             const customInput = document.getElementById('expCustomPayment');
@@ -3609,6 +3769,255 @@
                 customInput.required = false;
                 customInput.value = '';
             }
+        }
+
+        function setScanStatus(mode, message) {
+            const banner = document.getElementById('scanStatusBanner');
+            const iconEl = document.getElementById('scanStatusIcon');
+            const textEl = document.getElementById('scanStatusText');
+            const retryBtn = document.getElementById('scanRetryBtn');
+            if (!banner) return;
+
+            banner.classList.remove('show', 'success', 'error');
+            retryBtn.style.display = 'none';
+
+            if (!mode) return;
+
+            banner.classList.add('show');
+            textEl.innerText = message;
+
+            if (mode === 'scanning') {
+                iconEl.innerHTML = UI_SVGS.cloudSync;
+            } else if (mode === 'success') {
+                banner.classList.add('success');
+                iconEl.innerHTML = UI_SVGS.checkCircle;
+            } else if (mode === 'error') {
+                banner.classList.add('error');
+                iconEl.innerHTML = UI_SVGS.alertTriangle;
+                retryBtn.style.display = 'inline-block';
+            }
+        }
+
+        function highlightAutoFilledField(el) {
+            if (!el) return;
+            el.classList.remove('ai-autofilled');
+            void el.offsetWidth;
+            el.classList.add('ai-autofilled');
+        }
+
+        function isMobileOrTouchDevice() {
+            return ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+        }
+
+        async function triggerCameraScan() {
+            // On mobile phones/tablets, use native rear camera input for crisp autofocus
+            if (isMobileOrTouchDevice()) {
+                document.getElementById('cameraInput').click();
+                return;
+            }
+
+            // On desktop/laptop, open live webcam viewfinder so "Scan with Camera" is distinct from file upload
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                try {
+                    stopCameraStream();
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 960 } },
+                        audio: false
+                    });
+                    activeCameraStream = stream;
+                    const videoEl = document.getElementById('liveCameraVideo');
+                    videoEl.srcObject = stream;
+                    document.getElementById('liveCameraWrap').classList.add('active');
+                    return;
+                } catch {
+                    // Fallback to file input if user denies webcam or has no camera connected
+                }
+            }
+
+            document.getElementById('cameraInput').click();
+        }
+
+        function triggerGalleryUpload() {
+            stopCameraStream();
+            document.getElementById('galleryInput').click();
+        }
+
+        function stopCameraStream() {
+            if (activeCameraStream) {
+                activeCameraStream.getTracks().forEach(track => track.stop());
+                activeCameraStream = null;
+            }
+            const videoEl = document.getElementById('liveCameraVideo');
+            if (videoEl) videoEl.srcObject = null;
+            const wrap = document.getElementById('liveCameraWrap');
+            if (wrap) wrap.classList.remove('active');
+        }
+
+        function captureFromLiveCamera() {
+            const videoEl = document.getElementById('liveCameraVideo');
+            if (!videoEl || !videoEl.videoWidth) return;
+
+            const maxW = 1200;
+            let w = videoEl.videoWidth;
+            let h = videoEl.videoHeight;
+            if (w > maxW) {
+                h = Math.round((h * maxW) / w);
+                w = maxW;
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(videoEl, 0, 0, w, h);
+
+            stopCameraStream();
+
+            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.78);
+            applyReceiptPreviewAndScan(compressedDataUrl);
+        }
+
+        function handleReceiptFile(input) {
+            const file = input.files && input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const img = new Image();
+                img.onload = function() {
+                    const maxW = 1200;
+                    let w = img.width;
+                    let h = img.height;
+                    if (w > maxW) {
+                        h = Math.round((h * maxW) / w);
+                        w = maxW;
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+
+                    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.78);
+                    applyReceiptPreviewAndScan(compressedDataUrl);
+                };
+                img.src = evt.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function applyReceiptPreviewAndScan(dataUrl) {
+            pendingReceiptDataUrl = dataUrl;
+            document.getElementById('receiptPreviewImg').src = dataUrl;
+            document.getElementById('receiptPreviewWrap').classList.add('has-img');
+            scanReceiptWithAI(dataUrl);
+        }
+
+        function rescanCurrentReceipt() {
+            if (!pendingReceiptDataUrl) return;
+            scanReceiptWithAI(pendingReceiptDataUrl);
+        }
+
+        async function scanReceiptWithAI(dataUrl) {
+            if (activeScanAbortController) {
+                activeScanAbortController.abort();
+            }
+            activeScanAbortController = new AbortController();
+
+            setScanStatus('scanning', 'Scanning receipt & extracting fields...');
+
+            try {
+                const response = await fetch('/api/scan-receipt', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    signal: activeScanAbortController.signal,
+                    body: JSON.stringify({
+                        imageBase64: dataUrl,
+                        mimeType: 'image/jpeg'
+                    })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'Receipt scan failed.');
+                }
+
+                let filledCount = 0;
+
+                if (result.amount && Number(result.amount) > 0) {
+                    const amountEl = document.getElementById('expAmount');
+                    amountEl.value = Number(result.amount).toFixed(2);
+                    highlightAutoFilledField(amountEl.closest('.amount-box'));
+                    filledCount++;
+                }
+
+                if (result.merchant) {
+                    const titleEl = document.getElementById('expTitle');
+                    titleEl.value = result.merchant;
+                    highlightAutoFilledField(titleEl);
+                    filledCount++;
+                }
+
+                if (result.category) {
+                    selectExpenseCategory(result.category);
+                    highlightAutoFilledField(document.getElementById('catSelectTrigger'));
+                    filledCount++;
+                }
+
+                if (result.date && /^\d{4}-\d{2}-\d{2}$/.test(result.date)) {
+                    const dateEl = document.getElementById('expDate');
+                    dateEl.value = result.date;
+                    highlightAutoFilledField(dateEl);
+                    filledCount++;
+                }
+
+                if (result.payment) {
+                    const paymentSelect = document.getElementById('expPayment');
+                    const matchedOption = Array.from(paymentSelect.options).find(
+                        opt => opt.value !== '__custom__' && opt.value.toLowerCase() === result.payment.toLowerCase()
+                    );
+                    if (matchedOption) {
+                        paymentSelect.value = matchedOption.value;
+                        handlePaymentChange(matchedOption.value);
+                    } else {
+                        paymentSelect.value = '__custom__';
+                        handlePaymentChange('__custom__');
+                        document.getElementById('expCustomPayment').value = result.payment;
+                    }
+                    highlightAutoFilledField(paymentSelect);
+                }
+
+                if (result.note) {
+                    const noteEl = document.getElementById('expNote');
+                    noteEl.value = result.note;
+                    highlightAutoFilledField(noteEl);
+                }
+
+                if (filledCount > 0) {
+                    setScanStatus('success', 'Auto-filled from receipt — review & save');
+                } else {
+                    setScanStatus('error', 'Could not read receipt text clearly — enter details manually');
+                }
+            } catch (err) {
+                if (err.name === 'AbortError') return;
+                console.warn('AI receipt scan error:', err);
+                setScanStatus('error', 'Auto-fill unavailable — receipt attached, enter details manually');
+            }
+        }
+
+        function clearReceiptImage() {
+            if (activeScanAbortController) {
+                activeScanAbortController.abort();
+                activeScanAbortController = null;
+            }
+            stopCameraStream();
+            pendingReceiptDataUrl = null;
+            document.getElementById('cameraInput').value = '';
+            document.getElementById('galleryInput').value = '';
+            document.getElementById('receiptPreviewImg').src = '';
+            document.getElementById('receiptPreviewWrap').classList.remove('has-img');
+            setScanStatus(null, '');
         }
 
         async function openExpenseModal(editId = null) {
@@ -3660,53 +4069,21 @@
             }
 
             document.getElementById('expenseModal').classList.add('open');
-            setTimeout(() => document.getElementById('expAmount').focus(), 120);
         }
 
         function closeModal(id) {
+            if (id === 'expenseModal') {
+                stopCameraStream();
+                if (activeScanAbortController) {
+                    activeScanAbortController.abort();
+                    activeScanAbortController = null;
+                }
+            }
             document.getElementById(id).classList.remove('open');
         }
 
         function handleBackdropClose(e, id) {
             if (e.target.id === id) closeModal(id);
-        }
-
-        function handleReceiptFile(input) {
-            const file = input.files && input.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(evt) {
-                const img = new Image();
-                img.onload = function() {
-                    const maxW = 900;
-                    let w = img.width;
-                    let h = img.height;
-                    if (w > maxW) {
-                        h = Math.round((h * maxW) / w);
-                        w = maxW;
-                    }
-                    const canvas = document.createElement('canvas');
-                    canvas.width = w;
-                    canvas.height = h;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, w, h);
-
-                    pendingReceiptDataUrl = canvas.toDataURL('image/jpeg', 0.70);
-                    document.getElementById('receiptPreviewImg').src = pendingReceiptDataUrl;
-                    document.getElementById('receiptPreviewWrap').classList.add('has-img');
-                };
-                img.src = evt.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function clearReceiptImage() {
-            pendingReceiptDataUrl = null;
-            document.getElementById('cameraInput').value = '';
-            document.getElementById('galleryInput').value = '';
-            document.getElementById('receiptPreviewImg').src = '';
-            document.getElementById('receiptPreviewWrap').classList.remove('has-img');
         }
 
         async function saveExpense(e) {
@@ -3969,7 +4346,12 @@
             handlePaymentChange,
             closeModal,
             handleBackdropClose,
+            triggerCameraScan,
+            triggerGalleryUpload,
+            stopCameraStream,
+            captureFromLiveCamera,
             handleReceiptFile,
+            rescanCurrentReceipt,
             clearReceiptImage,
             saveExpense,
             deleteExpense,
