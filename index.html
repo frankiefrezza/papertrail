@@ -196,12 +196,12 @@
             opacity: 0;
         }
 
-        .splash-logo-box {
-            width: 116px;
-            height: 116px;
-            border-radius: 28px;
+                .splash-logo-box {
+            width: 136px;
+            height: 136px;
+            border-radius: 32px;
             background: #ffffff;
-            padding: 12px;
+            padding: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -224,8 +224,8 @@
         }
 
         .splash-wordmark {
-            margin-top: 16px;
-            font-size: 24px;
+            margin-top: 18px;
+            font-size: 29px;
             font-weight: 800;
             letter-spacing: -0.03em;
             color: var(--text-main);
@@ -266,7 +266,7 @@
             }
         }
 
-        /* Login Card & Target Morph Slot */
+                /* Login Card & Target Morph Slot */
         .auth-card {
             width: 100%;
             max-width: 416px;
@@ -280,14 +280,15 @@
             text-align: center;
             will-change: transform, opacity;
             transition:
-                opacity 0.52s cubic-bezier(0.22, 1, 0.36, 1),
-                transform 0.52s cubic-bezier(0.22, 1, 0.36, 1);
+                opacity 0.56s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.56s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         .auth-card.pre-morph {
             opacity: 0;
-            transform: scale(0.86) translateY(20px);
+            transform: scale(0.94) translateY(14px);
             pointer-events: none;
+            transition: none;
         }
 
         .auth-card-logo-slot {
@@ -2855,8 +2856,9 @@
         let activeScanAbortController = null;
         let hasCompletedInitialSplash = false;
 
-        // Minimum hold time so the splash logo pop-in is crisp before morphing
-        const splashHoldPromise = new Promise(resolve => setTimeout(resolve, 1050));
+                // Minimum hold time so the splash logo pop-in is crisp before morphing
+        const splashHoldPromise = new Promise(resolve => setTimeout(resolve, 1450));
+
 
         // ==================== CUSTOM CATEGORY PICKER INIT ====================
         function initCategoryPicker() {
@@ -2990,7 +2992,7 @@
         window.addEventListener('offline', () => setSyncIndicator('offline'));
 
         // ==================== SPLASH MORPH & FIREBASE AUTH FLOW ====================
-        function morphSplashIntoLoginCard(animateMorph = true) {
+                function morphSplashIntoLoginCard(animateMorph = true) {
             const overlay = document.getElementById('authOverlay');
             const splashStage = document.getElementById('splashStage');
             const splashLogoBox = document.getElementById('splashLogoBox');
@@ -3010,48 +3012,45 @@
                 return;
             }
 
-            // Prepare login card in pre-morph state so we can measure target slot coordinates
+            // 1. Measure the card's final resting slot at full scale (1.0) before animating
+            accountView.style.visibility = 'hidden';
             accountView.style.display = 'block';
-            accountView.classList.add('pre-morph');
+            accountView.classList.remove('pre-morph');
             cardLogoSlot.classList.remove('landed');
 
+            const firstRect = splashLogoBox.getBoundingClientRect();
+            const lastRect = cardLogoSlot.getBoundingClientRect();
+
+            const deltaX = (lastRect.left + lastRect.width / 2) - (firstRect.left + firstRect.width / 2);
+            const deltaY = (lastRect.top + lastRect.height / 2) - (firstRect.top + firstRect.height / 2);
+            const scaleRatio = lastRect.width / firstRect.width;
+
+            // 2. Set the card to its pre-morph starting state and make it visible for transition
+            accountView.classList.add('pre-morph');
+            accountView.style.visibility = '';
+            void accountView.offsetWidth;
+
+            // 3. Glide logo smoothly into place while unfolding the login card simultaneously
+            splashWordmark.classList.add('hide');
+            splashLogoBox.style.animation = 'none';
+            splashLogoBox.style.transition = [
+                'transform 0.58s cubic-bezier(0.22, 1, 0.36, 1)',
+                'border-radius 0.58s cubic-bezier(0.22, 1, 0.36, 1)',
+                'box-shadow 0.58s cubic-bezier(0.22, 1, 0.36, 1)'
+            ].join(', ');
+
             requestAnimationFrame(() => {
-                const firstRect = splashLogoBox.getBoundingClientRect();
-                const lastRect = cardLogoSlot.getBoundingClientRect();
-
-                const firstCenterX = firstRect.left + firstRect.width / 2;
-                const firstCenterY = firstRect.top + firstRect.height / 2;
-                const lastCenterX = lastRect.left + lastRect.width / 2;
-                const lastCenterY = lastRect.top + lastRect.height / 2;
-
-                const deltaX = lastCenterX - firstCenterX;
-                const deltaY = lastCenterY - firstCenterY;
-                const scaleRatio = lastRect.width / firstRect.width;
-
-                // Fade splash wordmark and glide logo into the top badge slot of the login card
-                splashWordmark.classList.add('hide');
-                splashLogoBox.style.animation = 'none';
-                splashLogoBox.style.transition = 'transform 0.62s cubic-bezier(0.22, 1, 0.36, 1), border-radius 0.62s ease, box-shadow 0.62s ease';
-
-                requestAnimationFrame(() => {
-                    splashLogoBox.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${scaleRatio})`;
-                    splashLogoBox.style.borderRadius = '32px';
-
-                    // Unfold login card smoothly from behind the arriving logo
-                    setTimeout(() => {
-                        accountView.classList.remove('pre-morph');
-                    }, 110);
-
-                    // Hand off to permanent card logo badge once morph finishes
-                    setTimeout(() => {
-                        cardLogoSlot.classList.add('landed');
-                        splashStage.classList.add('faded');
-                        setTimeout(() => {
-                            splashStage.style.display = 'none';
-                        }, 280);
-                    }, 610);
-                });
+                splashLogoBox.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0) scale(${scaleRatio})`;
+                splashLogoBox.style.borderRadius = '32px';
+                splashLogoBox.style.boxShadow = '0 16px 44px rgba(46, 139, 110, 0.22), 0 0 0 2px rgba(58, 161, 130, 0.28)';
+                accountView.classList.remove('pre-morph');
             });
+
+            // 4. Seamless handoff once the logo lands in the slot
+            setTimeout(() => {
+                cardLogoSlot.classList.add('landed');
+                splashStage.style.display = 'none';
+            }, 590);
         }
 
         function unlockAppUI(animate = true) {
