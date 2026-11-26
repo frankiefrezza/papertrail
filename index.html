@@ -156,21 +156,21 @@
             animation: aiHighlight 1.4s ease-out;
         }
 
-        /* ==================== LOGIN / CLOUD VAULT OVERLAY ==================== */
+        /* ==================== SPLASH & MORPH INTO LOGIN OVERLAY ==================== */
         .auth-overlay {
             position: fixed;
             inset: 0;
             z-index: 100;
             background-color: var(--bg-auth-overlay);
             background-image:
-                radial-gradient(circle at 20% 12%, rgba(58, 161, 130, 0.08), transparent 44%),
-                radial-gradient(circle at 82% 85%, rgba(91, 150, 184, 0.08), transparent 46%);
+                radial-gradient(circle at 20% 12%, rgba(58, 161, 130, 0.09), transparent 44%),
+                radial-gradient(circle at 82% 85%, rgba(91, 150, 184, 0.09), transparent 46%);
             display: flex;
             align-items: center;
             justify-content: center;
             padding: calc(20px + var(--safe-top)) 18px calc(20px + var(--safe-bottom));
             overflow-y: auto;
-            transition: opacity 0.28s ease, transform 0.28s ease;
+            transition: opacity 0.36s ease, transform 0.36s ease;
         }
 
         .auth-overlay.hidden {
@@ -179,6 +179,94 @@
             transform: scale(1.02);
         }
 
+        /* Launch Splash Stage (Centered Logo Pop-In) */
+        .splash-stage {
+            position: fixed;
+            inset: 0;
+            z-index: 110;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            transition: opacity 0.26s ease;
+        }
+
+        .splash-stage.faded {
+            opacity: 0;
+        }
+
+        .splash-logo-box {
+            width: 116px;
+            height: 116px;
+            border-radius: 28px;
+            background: #ffffff;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow:
+                0 22px 54px rgba(46, 139, 110, 0.28),
+                0 8px 20px rgba(0, 0, 0, 0.24),
+                0 0 0 1px rgba(58, 161, 130, 0.32);
+            transform-origin: center center;
+            will-change: transform, opacity, border-radius;
+            animation: logoPopIn 0.65s cubic-bezier(0.22, 1.28, 0.36, 1) forwards;
+        }
+
+        .splash-logo-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        .splash-wordmark {
+            margin-top: 16px;
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: var(--text-main);
+            opacity: 0;
+            transform: translateY(8px);
+            animation: wordmarkRise 0.45s ease 0.22s forwards;
+            transition: opacity 0.22s ease, transform 0.22s ease;
+        }
+
+        .splash-wordmark span {
+            color: var(--mint);
+        }
+
+        .splash-wordmark.hide {
+            opacity: 0 !important;
+            transform: translateY(-6px) !important;
+        }
+
+        @keyframes logoPopIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.42) translateY(14px);
+            }
+            68% {
+                opacity: 1;
+                transform: scale(1.06) translateY(-2px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        @keyframes wordmarkRise {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Login Card & Target Morph Slot */
         .auth-card {
             width: 100%;
             max-width: 416px;
@@ -187,25 +275,47 @@
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border-strong);
             border-radius: 24px;
-            padding: 30px 26px 26px;
+            padding: 28px 26px 26px;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.22);
             text-align: center;
+            will-change: transform, opacity;
+            transition:
+                opacity 0.52s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.52s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
-        .auth-badge {
-            display: inline-flex;
+        .auth-card.pre-morph {
+            opacity: 0;
+            transform: scale(0.86) translateY(20px);
+            pointer-events: none;
+        }
+
+        .auth-card-logo-slot {
+            width: 58px;
+            height: 58px;
+            margin: 0 auto 12px;
+            border-radius: 16px;
+            background: #ffffff;
+            padding: 7px;
+            display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: var(--mint);
-            background: var(--accent-soft);
-            border: 1px solid var(--accent-border);
-            padding: 4px 10px;
-            border-radius: 999px;
-            margin-bottom: 12px;
+            justify-content: center;
+            box-shadow:
+                0 8px 22px rgba(46, 139, 110, 0.22),
+                0 0 0 1px rgba(58, 161, 130, 0.28);
+            opacity: 0;
+            transition: opacity 0.16s ease;
+        }
+
+        .auth-card-logo-slot.landed {
+            opacity: 1;
+        }
+
+        .auth-card-logo-slot img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
         }
 
         .auth-title {
@@ -2026,76 +2136,72 @@
 </head>
 <body class="locked">
 
-    <!-- ==================== LOGIN / CLOUD VAULT SCREEN ==================== -->
+    <!-- ==================== SPLASH + LOGIN MORPH OVERLAY ==================== -->
     <div id="authOverlay" class="auth-overlay">
-        <div class="auth-card">
-            <div class="auth-badge" id="authBadge">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+        <!-- Initial Pop-In Splash Logo -->
+        <div id="splashStage" class="splash-stage">
+            <div id="splashLogoBox" class="splash-logo-box">
+                <img src="appicon.png" alt="PaperTrail">
+            </div>
+            <div id="splashWordmark" class="splash-wordmark">Paper<span>Trail</span></div>
+        </div>
+
+        <!-- Login Card (Morphs open from behind the landing logo) -->
+        <div id="authAccountView" class="auth-card pre-morph" style="display:none;">
+            <div id="authCardLogoSlot" class="auth-card-logo-slot">
+                <img src="appicon.png" alt="PaperTrail">
+            </div>
+
+            <h1 class="auth-title">Paper<span>Trail</span></h1>
+            <p class="auth-sub" id="authSubtitleText">Sign in to sync your expenses, cycles, and receipt photos across every device.</p>
+
+            <button type="button" class="google-btn" onclick="handleGoogleSignIn()">
+                <svg width="18" height="18" viewBox="0 0 48 48">
+                    <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                    <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                    <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                    <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
                 </svg>
-                <span id="authBadgeText">Connecting Cloud Vault</span>
+                Continue with Google
+            </button>
+
+            <div class="auth-divider">or with email</div>
+
+            <div class="auth-tabs">
+                <button type="button" class="auth-tab-btn active" id="tabSignIn" onclick="switchAuthTab('signin')">Sign In</button>
+                <button type="button" class="auth-tab-btn" id="tabSignUp" onclick="switchAuthTab('signup')">Create Account</button>
             </div>
 
-            <!-- MODE 0: LOADING AUTH STATE -->
-            <div id="authLoadingView">
-                <h1 class="auth-title">Paper<span>Trail</span></h1>
-                <p class="auth-sub">Verifying your encrypted session...</p>
-                <div class="spinner"></div>
-            </div>
-
-            <!-- MODE A: CLOUD ACCOUNT SIGN IN / SIGN UP -->
-            <div id="authAccountView" style="display:none;">
-                <h1 class="auth-title">Paper<span>Trail</span></h1>
-                <p class="auth-sub" id="authSubtitleText">Sign in to sync your expenses, cycles, and receipt photos across every device.</p>
-
-                <button type="button" class="google-btn" onclick="handleGoogleSignIn()">
-                    <svg width="18" height="18" viewBox="0 0 48 48">
-                        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-                        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-                        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-                        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-                    </svg>
-                    Continue with Google
-                </button>
-
-                <div class="auth-divider">or with email</div>
-
-                <div class="auth-tabs">
-                    <button type="button" class="auth-tab-btn active" id="tabSignIn" onclick="switchAuthTab('signin')">Sign In</button>
-                    <button type="button" class="auth-tab-btn" id="tabSignUp" onclick="switchAuthTab('signup')">Create Account</button>
+            <form class="auth-setup-form" onsubmit="handleEmailAuth(event)">
+                <!-- Username field (Create Account only) -->
+                <div class="field-group" id="signupUsernameGroup" style="display:none; margin-top:0; margin-bottom:11px;">
+                    <label class="field-label" for="authUsernameInput">Username / Display Name</label>
+                    <input type="text" id="authUsernameInput" class="text-input" placeholder="e.g. Nikola Tesla" maxlength="32" autocomplete="name">
                 </div>
 
-                <form class="auth-setup-form" onsubmit="handleEmailAuth(event)">
-                    <!-- Username field (Create Account only) -->
-                    <div class="field-group" id="signupUsernameGroup" style="display:none; margin-top:0; margin-bottom:11px;">
-                        <label class="field-label" for="authUsernameInput">Username / Display Name</label>
-                        <input type="text" id="authUsernameInput" class="text-input" placeholder="e.g. Nikola Tesla" maxlength="32" autocomplete="name">
-                    </div>
-
-                    <div class="field-group" style="margin-top:0;">
-                        <label class="field-label" for="authEmailInput">Email Address</label>
-                        <input type="email" id="authEmailInput" class="text-input" placeholder="you@domain.com" autocomplete="email" required>
-                    </div>
-
-                    <div class="field-group">
-                        <label class="field-label" for="authPassInput">Password</label>
-                        <input type="password" id="authPassInput" class="text-input" placeholder="Minimum 6 characters" minlength="6" autocomplete="current-password" required>
-                    </div>
-
-                    <!-- Confirm Password field (Create Account only) -->
-                    <div class="field-group" id="signupConfirmPassGroup" style="display:none;">
-                        <label class="field-label" for="authConfirmPassInput">Confirm Password</label>
-                        <input type="password" id="authConfirmPassInput" class="text-input" placeholder="Re-enter your password" minlength="6" autocomplete="new-password">
-                    </div>
-
-                    <div class="auth-status" id="accountStatus" style="margin-top:10px; margin-bottom:2px; text-align:center;"></div>
-
-                    <button type="submit" class="btn-submit" id="emailAuthSubmitBtn" style="margin-top:10px;">Sign In to Vault</button>
-                </form>
-
-                <div class="auth-footer-link" id="forgotPassRow">
-                    <button type="button" onclick="handlePasswordReset()">Forgot Password?</button>
+                <div class="field-group" style="margin-top:0;">
+                    <label class="field-label" for="authEmailInput">Email Address</label>
+                    <input type="email" id="authEmailInput" class="text-input" placeholder="you@domain.com" autocomplete="email" required>
                 </div>
+
+                <div class="field-group">
+                    <label class="field-label" for="authPassInput">Password</label>
+                    <input type="password" id="authPassInput" class="text-input" placeholder="Minimum 6 characters" minlength="6" autocomplete="current-password" required>
+                </div>
+
+                <!-- Confirm Password field (Create Account only) -->
+                <div class="field-group" id="signupConfirmPassGroup" style="display:none;">
+                    <label class="field-label" for="authConfirmPassInput">Confirm Password</label>
+                    <input type="password" id="authConfirmPassInput" class="text-input" placeholder="Re-enter your password" minlength="6" autocomplete="new-password">
+                </div>
+
+                <div class="auth-status" id="accountStatus" style="margin-top:10px; margin-bottom:2px; text-align:center;"></div>
+
+                <button type="submit" class="btn-submit" id="emailAuthSubmitBtn" style="margin-top:10px;">Sign In to Vault</button>
+            </form>
+
+            <div class="auth-footer-link" id="forgotPassRow">
+                <button type="button" onclick="handlePasswordReset()">Forgot Password?</button>
             </div>
         </div>
     </div>
@@ -2559,7 +2665,7 @@
                     </div>
                 </div>
 
-                <!-- Expandable Icon Category Grid (Zero Emojis) -->
+                <!-- Expandable Icon Category Grid -->
                 <div class="cat-picker-panel" id="catPickerPanel">
                     <div class="cat-picker-grid" id="catPickerGrid"></div>
                 </div>
@@ -2663,7 +2769,7 @@
             db = getFirestore(app);
         }
 
-        // ==================== VECTOR SVG ICON LIBRARY (NO EMOJIS) ====================
+        // ==================== VECTOR SVG ICON LIBRARY ====================
         const CATEGORIES = [
             { id: 'Groceries', label: 'Groceries' },
             { id: 'Dining', label: 'Dining' },
@@ -2747,6 +2853,10 @@
         let authFormMode = 'signin';
         let activeCameraStream = null;
         let activeScanAbortController = null;
+        let hasCompletedInitialSplash = false;
+
+        // Minimum hold time so the splash logo pop-in is crisp before morphing
+        const splashHoldPromise = new Promise(resolve => setTimeout(resolve, 1050));
 
         // ==================== CUSTOM CATEGORY PICKER INIT ====================
         function initCategoryPicker() {
@@ -2879,31 +2989,88 @@
         });
         window.addEventListener('offline', () => setSyncIndicator('offline'));
 
-        // ==================== FIREBASE AUTH FLOW ====================
-        function showAuthScreen(mode) {
+        // ==================== SPLASH MORPH & FIREBASE AUTH FLOW ====================
+        function morphSplashIntoLoginCard(animateMorph = true) {
             const overlay = document.getElementById('authOverlay');
-            const loadingView = document.getElementById('authLoadingView');
+            const splashStage = document.getElementById('splashStage');
+            const splashLogoBox = document.getElementById('splashLogoBox');
+            const splashWordmark = document.getElementById('splashWordmark');
             const accountView = document.getElementById('authAccountView');
+            const cardLogoSlot = document.getElementById('authCardLogoSlot');
 
             document.body.classList.add('locked');
             overlay.classList.remove('hidden');
+            document.getElementById('accountStatus').innerText = '';
 
-            loadingView.style.display = mode === 'loading' ? 'block' : 'none';
-            accountView.style.display = mode === 'account' ? 'block' : 'none';
-
-            if (mode === 'loading') {
-                document.getElementById('authBadgeText').innerText = 'Connecting Cloud Vault';
-            } else if (mode === 'account') {
-                document.getElementById('authBadgeText').innerText = 'Cloud Vault Login';
-                document.getElementById('accountStatus').innerText = '';
+            if (!animateMorph) {
+                splashStage.style.display = 'none';
+                accountView.style.display = 'block';
+                accountView.classList.remove('pre-morph');
+                cardLogoSlot.classList.add('landed');
+                return;
             }
+
+            // Prepare login card in pre-morph state so we can measure target slot coordinates
+            accountView.style.display = 'block';
+            accountView.classList.add('pre-morph');
+            cardLogoSlot.classList.remove('landed');
+
+            requestAnimationFrame(() => {
+                const firstRect = splashLogoBox.getBoundingClientRect();
+                const lastRect = cardLogoSlot.getBoundingClientRect();
+
+                const firstCenterX = firstRect.left + firstRect.width / 2;
+                const firstCenterY = firstRect.top + firstRect.height / 2;
+                const lastCenterX = lastRect.left + lastRect.width / 2;
+                const lastCenterY = lastRect.top + lastRect.height / 2;
+
+                const deltaX = lastCenterX - firstCenterX;
+                const deltaY = lastCenterY - firstCenterY;
+                const scaleRatio = lastRect.width / firstRect.width;
+
+                // Fade splash wordmark and glide logo into the top badge slot of the login card
+                splashWordmark.classList.add('hide');
+                splashLogoBox.style.animation = 'none';
+                splashLogoBox.style.transition = 'transform 0.62s cubic-bezier(0.22, 1, 0.36, 1), border-radius 0.62s ease, box-shadow 0.62s ease';
+
+                requestAnimationFrame(() => {
+                    splashLogoBox.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${scaleRatio})`;
+                    splashLogoBox.style.borderRadius = '32px';
+
+                    // Unfold login card smoothly from behind the arriving logo
+                    setTimeout(() => {
+                        accountView.classList.remove('pre-morph');
+                    }, 110);
+
+                    // Hand off to permanent card logo badge once morph finishes
+                    setTimeout(() => {
+                        cardLogoSlot.classList.add('landed');
+                        splashStage.classList.add('faded');
+                        setTimeout(() => {
+                            splashStage.style.display = 'none';
+                        }, 280);
+                    }, 610);
+                });
+            });
         }
 
         function unlockAppUI(animate = true) {
             const overlay = document.getElementById('authOverlay');
-            if (!animate) overlay.style.transition = 'none';
+            const splashLogoBox = document.getElementById('splashLogoBox');
+            const splashWordmark = document.getElementById('splashWordmark');
+
+            if (animate && splashLogoBox) {
+                splashLogoBox.style.animation = 'none';
+                splashLogoBox.style.transition = 'transform 0.38s cubic-bezier(0.22, 1, 0.36, 1)';
+                splashLogoBox.style.transform = 'scale(1.1)';
+                if (splashWordmark) splashWordmark.classList.add('hide');
+            } else {
+                overlay.style.transition = 'none';
+            }
+
             overlay.classList.add('hidden');
             document.body.classList.remove('locked');
+
             if (!animate) {
                 requestAnimationFrame(() => { overlay.style.transition = ''; });
             }
@@ -3057,12 +3224,17 @@
                 unsubscribeState = null;
             }
 
+            // Ensure the initial logo pop-in plays cleanly before transitioning
+            await splashHoldPromise;
+            const isFirstLaunch = !hasCompletedInitialSplash;
+            hasCompletedInitialSplash = true;
+
             if (!user) {
                 currentUser = null;
                 userDisplayName = '';
                 state = createDefaultState();
                 receiptCache = {};
-                showAuthScreen('account');
+                morphSplashIntoLoginCard(isFirstLaunch);
                 return;
             }
 
@@ -3076,7 +3248,7 @@
             renderDashboard();
             renderProfile();
 
-            unlockAppUI(false);
+            unlockAppUI(true);
             startRealtimeCloudSync(user.uid);
 
             if (navigator.onLine) {
@@ -3810,13 +3982,11 @@
         }
 
         async function triggerCameraScan() {
-            // On mobile phones/tablets, use native rear camera input for crisp autofocus
             if (isMobileOrTouchDevice()) {
                 document.getElementById('cameraInput').click();
                 return;
             }
 
-            // On desktop/laptop, open live webcam viewfinder so "Scan with Camera" is distinct from file upload
             if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 try {
                     stopCameraStream();
