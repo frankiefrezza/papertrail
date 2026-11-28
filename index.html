@@ -3294,20 +3294,25 @@
             checkAndRolloverCycle(false);
         }
 
-        function saveLocalDeviceCache() {
+                function saveLocalDeviceCache() {
             if (!currentUser) return;
-            try {
-                localStorage.setItem(stateKeyFor(currentUser.uid), JSON.stringify(state));
-                localStorage.setItem(receiptsKeyFor(currentUser.uid), JSON.stringify(receiptCache));
-                updateStorageMeter();
-            } catch (err) {
-                console.warn('Local cache near capacity; pruning oldest cached receipt thumbnails:', err);
-                receiptCache = {};
+            const stateJson = JSON.stringify(state);
+
+            while (true) {
                 try {
-                    localStorage.setItem(receiptsKeyFor(currentUser.uid), '{}');
-                    localStorage.setItem(stateKeyFor(currentUser.uid), JSON.stringify(state));
-                } catch (e2) {
-                    console.error('Local storage full:', e2);
+                    localStorage.setItem(stateKeyFor(currentUser.uid), stateJson);
+                    localStorage.setItem(receiptsKeyFor(currentUser.uid), JSON.stringify(receiptCache));
+                    updateStorageMeter();
+                    return;
+                } catch (err) {
+                    const cachedIds = Object.keys(receiptCache);
+                    if (cachedIds.length > 0) {
+                        // Drop the oldest local thumbnail first; full image stays safe in Firestore
+                        delete receiptCache[cachedIds[0]];
+                    } else {
+                        console.error('Local storage full:', err);
+                        return;
+                    }
                 }
             }
         }
@@ -4046,7 +4051,7 @@
             applyReceiptPreviewAndScan(compressedDataUrl);
         }
 
-        function handleReceiptFile(input) {
+                function handleReceiptFile(input) {
             const file = input.files && input.files[0];
             if (!file) return;
 
@@ -4054,7 +4059,7 @@
             reader.onload = function(evt) {
                 const img = new Image();
                 img.onload = function() {
-                    const maxW = 1200;
+                    const maxW = 1024;
                     let w = img.width;
                     let h = img.height;
                     if (w > maxW) {
@@ -4067,10 +4072,19 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, w, h);
 
-                    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.78);
+                    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.74);
+                    input.value = '';
                     applyReceiptPreviewAndScan(compressedDataUrl);
                 };
+                img.onerror = function() {
+                    input.value = '';
+                    setScanStatus('error', 'Unsupported image format — try taking a photo or JPEG/PNG');
+                };
                 img.src = evt.target.result;
+            };
+            reader.onerror = function() {
+                input.value = '';
+                setScanStatus('error', 'Could not read photo file — please try again');
             };
             reader.readAsDataURL(file);
         }
