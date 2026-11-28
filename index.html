@@ -1954,6 +1954,134 @@
             margin: 0;
         }
 
+                /* Single-Receipt Category Split Builder */
+        .split-toggle-row {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 8px;
+        }
+
+        .split-toggle-btn {
+            background: none;
+            border: none;
+            color: var(--cyan);
+            font-size: 12px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 2px 0;
+        }
+
+        .split-toggle-btn:hover {
+            text-decoration: underline;
+        }
+
+        .split-builder-panel {
+            display: none;
+            margin-top: 12px;
+            background: var(--bg-input);
+            border: 1px solid var(--accent-border);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            animation: fadeSlideIn 0.18s ease;
+        }
+
+        .split-builder-panel.open {
+            display: block;
+        }
+
+        .split-builder-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .split-rows-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .split-row {
+            display: grid;
+            grid-template-columns: 1.25fr 0.85fr auto;
+            gap: 7px;
+            align-items: center;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 8px;
+        }
+
+        .split-row select,
+        .split-row input {
+            width: 100%;
+            min-width: 0;
+            background: var(--bg-input);
+            border: 1px solid var(--border-strong);
+            color: var(--text-main);
+            border-radius: 8px;
+            padding: 8px 9px;
+            font-size: 13px;
+            font-family: inherit;
+            outline: none;
+        }
+
+        .split-row input.split-amt-input {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .split-row input.split-note-input {
+            grid-column: 1 / -1;
+            font-size: 12px;
+            padding: 6px 9px;
+        }
+
+        .split-remove-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 7px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--danger-text);
+            font-size: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .split-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-top: 10px;
+            padding-top: 9px;
+            border-top: 1px solid var(--border);
+            font-size: 12px;
+        }
+
+        .split-remainder {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            color: var(--warning);
+        }
+
+        .split-remainder.balanced {
+            color: var(--mint);
+        }
+
+        .split-remainder.over {
+            color: var(--danger-text);
+        }
+
         /* Receipt Capture & AI Scanner Zone */
         .receipt-zone {
             background: var(--bg-input);
@@ -2663,8 +2791,9 @@
 
                 <div class="amount-box">
                     <span class="currency-prefix">$</span>
-                    <input type="number" id="expAmount" class="amount-input" placeholder="0.00" step="0.01" min="0.01" inputmode="decimal" required>
+                    <input type="number" id="expAmount" class="amount-input" placeholder="0.00" step="0.01" min="0.01" inputmode="decimal" oninput="updateSplitSummary()" required>
                 </div>
+
 
                 <div class="field-group" style="margin-top:0;">
                     <label class="field-label" for="expTitle">Merchant / What You Bought</label>
@@ -2692,9 +2821,28 @@
                     </div>
                 </div>
 
-                <!-- Expandable Icon Category Grid -->
+                               <!-- Expandable Icon Category Grid -->
                 <div class="cat-picker-panel" id="catPickerPanel">
                     <div class="cat-picker-grid" id="catPickerGrid"></div>
+                </div>
+
+                <!-- Single-Receipt Category Split Toggle & Panel -->
+                <div class="split-toggle-row" id="splitToggleRow">
+                    <button type="button" class="split-toggle-btn" id="splitToggleBtn" onclick="toggleSplitMode()">
+                        + Split across multiple categories
+                    </button>
+                </div>
+
+                <div class="split-builder-panel" id="splitBuilderPanel">
+                    <div class="split-builder-head">
+                        <span class="field-label" style="margin-bottom:0; color:var(--mint);">Category Split Breakdown</span>
+                        <button type="button" class="text-action" onclick="toggleSplitMode(false)">Cancel Split</button>
+                    </div>
+                    <div class="split-rows-list" id="splitRowsList"></div>
+                    <div class="split-footer">
+                        <button type="button" class="text-action" onclick="addSplitRow()">+ Add Category</button>
+                        <span class="split-remainder" id="splitRemainderText">$0.00 remaining</span>
+                    </div>
                 </div>
 
                 <div class="form-grid-2">
@@ -2880,6 +3028,8 @@
         let authFormMode = 'signin';
         let activeCameraStream = null;
         let activeScanAbortController = null;
+        let isSplitMode = false;
+        let splitRows = [];
         let hasCompletedInitialSplash = false;
 
                 // Minimum hold time so the splash logo pop-in is crisp before morphing
@@ -4244,11 +4394,123 @@
             setScanStatus(null, '');
         }
 
+                function toggleSplitMode(forceState) {
+            isSplitMode = typeof forceState === 'boolean' ? forceState : !isSplitMode;
+
+            const panel = document.getElementById('splitBuilderPanel');
+            const toggleBtn = document.getElementById('splitToggleBtn');
+            const catTrigger = document.getElementById('catSelectTrigger');
+
+            if (isSplitMode) {
+                document.getElementById('catPickerPanel').classList.remove('open');
+                catTrigger.classList.remove('open');
+                catTrigger.style.opacity = '0.5';
+                catTrigger.style.pointerEvents = 'none';
+                document.getElementById('catTriggerLabel').innerText = 'Split (Multiple)';
+                toggleBtn.style.display = 'none';
+                panel.classList.add('open');
+
+                const currentTotal = parseFloat(document.getElementById('expAmount').value) || 0;
+                const primaryCat = document.getElementById('expCategory').value || 'Groceries';
+                splitRows = [
+                    { category: primaryCat, amount: currentTotal > 0 ? currentTotal.toFixed(2) : '', note: '' },
+                    { category: primaryCat === 'Shopping' ? 'Groceries' : 'Shopping', amount: '', note: '' }
+                ];
+                renderSplitRows();
+            } else {
+                panel.classList.remove('open');
+                toggleBtn.style.display = 'inline-flex';
+                catTrigger.style.opacity = '1';
+                catTrigger.style.pointerEvents = 'auto';
+                selectExpenseCategory(document.getElementById('expCategory').value || 'Groceries');
+                splitRows = [];
+            }
+        }
+
+        function addSplitRow(category = 'Shopping', amount = '', note = '') {
+            const total = parseFloat(document.getElementById('expAmount').value) || 0;
+            const allocated = splitRows.reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
+            const rem = Math.max(0, total - allocated);
+
+            splitRows.push({
+                category,
+                amount: amount !== '' ? amount : (rem > 0 ? rem.toFixed(2) : ''),
+                note
+            });
+            renderSplitRows();
+        }
+
+        function removeSplitRow(index) {
+            if (splitRows.length <= 2) {
+                toggleSplitMode(false);
+                return;
+            }
+            splitRows.splice(index, 1);
+            renderSplitRows();
+        }
+
+        function updateSplitRow(index, field, value) {
+            if (!splitRows[index]) return;
+            splitRows[index][field] = value;
+            if (field === 'amount') updateSplitSummary();
+        }
+
+        function renderSplitRows() {
+            const listEl = document.getElementById('splitRowsList');
+            if (!listEl) return;
+
+            listEl.innerHTML = splitRows.map((row, idx) => `
+                <div class="split-row">
+                    <select onchange="updateSplitRow(${idx}, 'category', this.value)">
+                        ${CATEGORIES.map(c => `
+                            <option value="${escapeAttr(c.id)}" ${c.id === row.category ? 'selected' : ''}>
+                                ${escapeHtml(c.label)}
+                            </option>
+                        `).join('')}
+                    </select>
+                    <input type="number" class="split-amt-input" placeholder="0.00" step="0.01" min="0.01" inputmode="decimal"
+                        value="${escapeAttr(row.amount)}"
+                        oninput="updateSplitRow(${idx}, 'amount', this.value)">
+                    <button type="button" class="split-remove-btn" title="Remove split" onclick="removeSplitRow(${idx})">&times;</button>
+                    <input type="text" class="split-note-input" placeholder="Optional item note for this split..."
+                        value="${escapeAttr(row.note || '')}"
+                        oninput="updateSplitRow(${idx}, 'note', this.value)">
+                </div>
+            `).join('');
+
+            updateSplitSummary();
+        }
+
+        function updateSplitSummary() {
+            if (!isSplitMode) return;
+            const remEl = document.getElementById('splitRemainderText');
+            if (!remEl) return;
+
+            const total = parseFloat(document.getElementById('expAmount').value) || 0;
+            const allocated = splitRows.reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
+            const diff = Number((total - allocated).toFixed(2));
+
+            remEl.classList.remove('balanced', 'over');
+            if (Math.abs(diff) < 0.01 && total > 0) {
+                remEl.classList.add('balanced');
+                remEl.innerText = 'Balanced ($0.00 left)';
+            } else if (diff < 0) {
+                remEl.classList.add('over');
+                remEl.innerText = `${formatMoney(Math.abs(diff))} over total`;
+            } else {
+                remEl.innerText = `${formatMoney(diff)} remaining`;
+            }
+        }
+
+        
         async function openExpenseModal(editId = null) {
             const form = document.getElementById('expenseForm');
             form.reset();
             clearReceiptImage();
             handlePaymentChange('Apple Pay');
+                        toggleSplitMode(false);
+            document.getElementById('splitToggleRow').style.display = editId ? 'none' : 'flex';
+
 
             if (editId) {
                 const item = state.activeExpenses.find(e => e.id === editId);
@@ -4351,6 +4613,61 @@
                     );
                     if (!saveAnyway) return;
                 }
+            }
+
+                        // Handle Multi-Category Split Save
+            if (isSplitMode && !editId) {
+                const validSplits = splitRows
+                    .map(r => ({
+                        category: r.category || 'Other',
+                        amount: parseFloat(r.amount),
+                        note: (r.note || '').trim()
+                    }))
+                    .filter(r => !isNaN(r.amount) && r.amount > 0);
+
+                if (validSplits.length < 2) {
+                    alert('Please enter valid amounts for at least 2 split categories.');
+                    return;
+                }
+
+                const splitTotal = validSplits.reduce((sum, r) => sum + r.amount, 0);
+                if (Math.abs(splitTotal - amount) >= 0.01) {
+                    alert(`Split amounts (${formatMoney(splitTotal)}) must equal the receipt total (${formatMoney(amount)}).`);
+                    return;
+                }
+
+                const baseTs = Date.now();
+                const hasReceipt = Boolean(pendingReceiptDataUrl);
+
+                validSplits.reverse().forEach((sp, idx) => {
+                    const splitId = `exp_${baseTs}_${idx}`;
+                    if (hasReceipt) {
+                        receiptCache[splitId] = pendingReceiptDataUrl;
+                        setDoc(doc(db, 'users', currentUser.uid, 'receipts', splitId), {
+                            dataUrl: pendingReceiptDataUrl,
+                            updatedAt: baseTs
+                        }).catch(err => console.error('Split receipt upload failed:', err));
+                    }
+
+                    const combinedNote = [sp.note, note].filter(Boolean).join(' • ') || `Split receipt (${formatMoney(amount)} total)`;
+
+                    state.activeExpenses.unshift({
+                        id: splitId,
+                        amount: sp.amount,
+                        title,
+                        category: sp.category,
+                        date,
+                        payment,
+                        note: combinedNote,
+                        hasReceipt,
+                        createdAt: baseTs + idx
+                    });
+                });
+
+                closeModal('expenseModal');
+                switchView('dashboard');
+                await syncStateToCloud();
+                return;
             }
 
             const expenseId = editId || ('exp_' + Date.now());
@@ -4611,7 +4928,12 @@
             handleGoogleSignIn,
             handlePasswordReset,
             signOutCloudAccount,
-            forceCloudSync
+            forceCloudSync,
+            toggleSplitMode,
+            addSplitRow,
+            removeSplitRow,
+            updateSplitRow,
+            updateSplitSummary
         });
     </script>
 </body>
