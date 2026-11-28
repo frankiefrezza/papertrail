@@ -1,3 +1,13 @@
+async function fetchWithTimeout(url, options, timeoutMs = 4500) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+        return await fetch(url, { ...options, signal: controller.signal });
+    } finally {
+        clearTimeout(timer);
+    }
+}
+
 module.exports = async function handler(req, res) {
     if (req.method !== 'POST') {
         res.setHeader('Allow', 'POST');
@@ -93,8 +103,14 @@ module.exports = async function handler(req, res) {
             }
         };
 
-        // Try fast high-availability Lite model first, then fall back to standard Flash
-        const modelsToTry = ['gemini-3.8-flash-lite', 'gemini-3.8-flash'];
+        // Route across rolling aliases and separate model pools to bypass traffic spikes
+        const modelsToTry = [
+            'gemini-flash-lite-latest',
+            'gemini-flash-latest',
+            'gemini-3.8-flash',
+            'gemini-3.8-pro'
+        ];
+
         let textOutput = '';
         let lastError = 'Gemini API request failed.';
         let lastStatus = 502;
@@ -103,35 +119,48 @@ module.exports = async function handler(req, res) {
             const model = modelsToTry[i];
             const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
 
-            const geminiResponse = await fetch(geminiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-goog-api-key': apiKey
-                },
-                body: JSON.stringify(requestPayload)
-            });
+            try {
+                const geminiResponse = await fetchWithTimeout(
+                    geminiUrl,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-goog-api-key': apiKey
+                        },
+                        body: JSON.stringify(requestPayload)
+                    },
+                    4500
+                );
 
-            const rawResult = await geminiResponse.json();
+                const rawResult = await geminiResponse.json();
 
-            if (geminiResponse.ok) {
-                textOutput = rawResult?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-                if (textOutput) break;
-                lastError = `Empty response from ${model}.`;
-                lastStatus = 502;
-                continue;
+                if (geminiResponse.ok) {
+                    textOutput = rawResult?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                    if (textOutput) break;
+                    lastError = `Empty response from ${model}.`;
+                    lastStatus = 502;
+                    continue;
+                }
+
+                lastStatus = geminiResponse.status;
+                lastError = `[${model}] ${rawResult?.error?.message || `HTTP ${geminiResponse.status}`}`;
+
+                // If 404/400, jump immediately to next model; if 429/503, pause 700ms first
+                if ([400, 404, 429, 503].includes(geminiResponse.status) && i < modelsToTry.length - 1) {
+                    if ([429, 503].includes(geminiResponse.status)) {
+                        await new Promise(resolve => setTimeout(resolve, 700));
+                    }
+                    continue;
+                }
+
+                return res.status(lastStatus).json({ error: lastError });
+            } catch (fetchErr) {
+                lastStatus = 504;
+                lastError = `[${model}] Request timed out`;
+                if (i < modelsToTry.length - 1) continue;
+                return res.status(lastStatus).json({ error: lastError });
             }
-
-            lastStatus = geminiResponse.status;
-            lastError = rawResult?.error?.message || `Gemini API error (${geminiResponse.status})`;
-
-            // Retry on next model if rate-limited (429), overloaded (503), or model unavailable (404)
-            if ([404, 429, 503].includes(geminiResponse.status) && i < modelsToTry.length - 1) {
-                await new Promise(resolve => setTimeout(resolve, 600));
-                continue;
-            }
-
-            return res.status(lastStatus).json({ error: lastError });
         }
 
         if (!textOutput) {
