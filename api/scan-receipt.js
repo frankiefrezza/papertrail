@@ -57,7 +57,7 @@ module.exports = async function handler(req, res) {
             '- note: Short, helpful summary of 1 to 3 key items purchased (under 60 characters), or empty string "" if unreadable.'
         ].join('\n');
 
-        const geminiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+        const geminiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent';
 
         const geminiResponse = await fetch(geminiUrl, {
             method: 'POST',
