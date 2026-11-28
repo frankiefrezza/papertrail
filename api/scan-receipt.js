@@ -56,15 +56,18 @@ module.exports = async function handler(req, res) {
             'Other'
         ];
 
-        const prompt = [
+                const prompt = [
             'Analyze this receipt image and extract the expense details.',
             'Rules:',
-            '- merchant: Clean store, restaurant, or vendor name (e.g. "Costco", "Sheetz", "Target").',
+            '- merchant: Clean store, restaurant, or vendor name (e.g. "Costco", "Sheetz", "Target"). If the store logo at the top is cropped out on a gas pump receipt, use "Fuel Purchase"; otherwise empty string "" if unreadable.',
             '- amount: Final total amount actually paid after tax and tip (use the final paid/charged total, not pre-tax subtotal) as a positive number.',
             '- date: Transaction date in YYYY-MM-DD format if clearly visible; otherwise empty string "".',
             '- category: Choose the single best matching category from the allowed enum list.',
             '- payment: Payment method if shown on receipt ("Apple Pay", "Google Pay", "Credit Card", "Debit Card", "Cash", "Gift Card"), otherwise empty string "".',
-            '- note: Short, helpful summary of 1 to 3 key items purchased (under 60 characters), or empty string "" if unreadable.'
+            '- note: Format based on receipt type (strictly under 60 characters):',
+            '  * Fuel & Auto: Format as "<gallons> gal @ $<price>/gal" (e.g. "33.18 gal @ $2.97/gal").',
+            '  * Dining or Coffee & Snacks: Show tip/tax if present (e.g. "Subtotal $38.50 + $7.50 tip") or main items.',
+            '  * All other categories: Short summary of 1 to 3 key items purchased, or empty string "" if unreadable.'
         ].join('\n');
 
         const requestPayload = {
