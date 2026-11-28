@@ -24,7 +24,7 @@
             const savedTheme = localStorage.getItem('papertrail_theme') || 'dark';
             document.documentElement.setAttribute('data-theme', savedTheme);
             const meta = document.getElementById('metaThemeColor');
-            if (meta) meta.setAttribute('content', savedTheme === 'light' ? '#f7f8fa' : '#0c1017');
+            if (meta) meta.setAttribute('content', savedTheme === 'light' ? '#f5f7fa' : '#0c1017');
         })();
     </script>
 
@@ -196,7 +196,7 @@
             opacity: 0;
         }
 
-                .splash-logo-box {
+        .splash-logo-box {
             width: 136px;
             height: 136px;
             border-radius: 32px;
@@ -266,7 +266,7 @@
             }
         }
 
-                /* Login Card & Target Morph Slot */
+        /* Login Card & Target Morph Slot */
         .auth-card {
             width: 100%;
             max-width: 416px;
@@ -1922,7 +1922,7 @@
             outline: none;
         }
 
-                .form-grid-2 {
+        .form-grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
@@ -1954,7 +1954,7 @@
             margin: 0;
         }
 
-                /* Single-Receipt Category Split Builder */
+        /* Single-Receipt Category Split Builder */
         .split-toggle-row {
             display: flex;
             justify-content: flex-end;
@@ -2278,7 +2278,12 @@
             cursor: not-allowed;
         }
 
-                /* Custom Duplicate Confirmation Dialog */
+        .btn-submit.danger-btn {
+            background: linear-gradient(135deg, #e05268 0%, #b83248 100%);
+            box-shadow: 0 4px 16px rgba(224, 82, 104, 0.24);
+        }
+
+        /* ==================== COHESIVE CONFIRMATION & ALERT DIALOGS ==================== */
         .confirm-backdrop {
             position: fixed;
             inset: 0;
@@ -2289,7 +2294,7 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
-            z-index: 80;
+            z-index: 85;
         }
 
         .confirm-backdrop.open {
@@ -2319,7 +2324,8 @@
             margin-bottom: 12px;
         }
 
-        .confirm-warn-icon {
+        .confirm-warn-icon,
+        .confirm-icon-badge {
             width: 40px;
             height: 40px;
             border-radius: 12px;
@@ -2332,6 +2338,34 @@
             flex-shrink: 0;
         }
 
+        .confirm-icon-badge.danger {
+            background: rgba(224, 82, 104, 0.14);
+            border-color: rgba(224, 82, 104, 0.34);
+            color: var(--danger);
+        }
+
+        .confirm-icon-badge.info {
+            background: var(--icon-bg);
+            border-color: var(--icon-border);
+            color: var(--cyan);
+        }
+
+        .confirm-icon-badge.success {
+            background: var(--accent-soft);
+            border-color: var(--accent-border);
+            color: var(--mint);
+        }
+
+        .confirm-kicker {
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--warning);
+        }
+
+        .confirm-kicker.danger { color: var(--danger-text); }
+        .confirm-kicker.info { color: var(--cyan); }
+        .confirm-kicker.success { color: var(--mint); }
+
         .confirm-title {
             font-size: 16px;
             font-weight: 800;
@@ -2342,8 +2376,8 @@
         .confirm-sub {
             font-size: 12.5px;
             color: var(--text-secondary);
-            line-height: 1.45;
-            margin-bottom: 14px;
+            line-height: 1.5;
+            margin-bottom: 16px;
         }
 
         .dup-summary-card {
@@ -2379,6 +2413,9 @@
             flex-shrink: 0;
         }
 
+        .dup-amount.danger { color: var(--danger-text); }
+        .dup-amount.mint { color: var(--mint); }
+
         .dup-meta-row {
             display: flex;
             align-items: center;
@@ -2396,12 +2433,17 @@
             background: var(--icon-bg);
             border: 1px solid var(--icon-border);
             color: var(--cyan);
+            flex-shrink: 0;
         }
 
         .confirm-actions {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
+        }
+
+        .confirm-actions.single {
+            grid-template-columns: 1fr;
         }
 
         .confirm-actions .btn-secondary,
@@ -2928,7 +2970,6 @@
                     <input type="number" id="expAmount" class="amount-input" placeholder="0.00" step="0.01" min="0.01" inputmode="decimal" oninput="updateSplitSummary()" required>
                 </div>
 
-
                 <div class="field-group" style="margin-top:0;">
                     <label class="field-label" for="expTitle">Merchant / What You Bought</label>
                     <input type="text" id="expTitle" class="text-input" placeholder="e.g. Costco, Sheetz Fuel, Coffee..." required>
@@ -2955,7 +2996,7 @@
                     </div>
                 </div>
 
-                               <!-- Expandable Icon Category Grid -->
+                <!-- Expandable Icon Category Grid -->
                 <div class="cat-picker-panel" id="catPickerPanel">
                     <div class="cat-picker-grid" id="catPickerGrid"></div>
                 </div>
@@ -3029,7 +3070,7 @@
         </div>
     </div>
 
-        <!-- ==================== MODAL: DUPLICATE RECEIPT CONFIRMATION ==================== -->
+    <!-- ==================== MODAL: DUPLICATE RECEIPT CONFIRMATION ==================== -->
     <div class="confirm-backdrop" id="duplicateConfirmModal" onclick="if (event.target === this) resolveDuplicateConfirm(false)">
         <div class="confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="dupModalTitle">
             <div class="confirm-header">
@@ -3062,6 +3103,37 @@
             <div class="confirm-actions">
                 <button type="button" class="btn-secondary" onclick="resolveDuplicateConfirm(false)">Cancel</button>
                 <button type="button" class="btn-submit" onclick="resolveDuplicateConfirm(true)">Save Anyway</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: UNIFIED COHESIVE DIALOG (ALERTS & CONFIRMS) ==================== -->
+    <div class="confirm-backdrop" id="appDialogModal" style="z-index: 95;" onclick="if (event.target === this) resolveAppDialog(false)">
+        <div class="confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="appDialogTitle">
+            <div class="confirm-header">
+                <div class="confirm-icon-badge info" id="appDialogIconBadge"></div>
+                <div>
+                    <div class="confirm-title" id="appDialogTitle">Notice</div>
+                    <div class="confirm-kicker info" id="appDialogKicker">PaperTrail</div>
+                </div>
+            </div>
+
+            <p class="confirm-sub" id="appDialogMessage"></p>
+
+            <div class="dup-summary-card" id="appDialogSummaryCard" style="display:none;">
+                <div class="dup-top-row">
+                    <span class="dup-merchant" id="appDialogSumLeftTop"></span>
+                    <span class="dup-amount" id="appDialogSumRightTop"></span>
+                </div>
+                <div class="dup-meta-row">
+                    <span id="appDialogSumLeftBottom"></span>
+                    <span class="dup-location-pill" id="appDialogSumRightBottom"></span>
+                </div>
+            </div>
+
+            <div class="confirm-actions" id="appDialogActions">
+                <button type="button" class="btn-secondary" id="appDialogCancelBtn" onclick="resolveAppDialog(false)">Cancel</button>
+                <button type="button" class="btn-submit" id="appDialogConfirmBtn" onclick="resolveAppDialog(true)">Confirm</button>
             </div>
         </div>
     </div>
@@ -3165,6 +3237,14 @@
             alertTriangle: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
         };
 
+        const DIALOG_ICONS = {
+            warn: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+            danger: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5 0V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>',
+            info: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
+            archive: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg>',
+            success: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
+        };
+
         function getCategorySvg(cat, size = 18) {
             const inner = CATEGORY_SVG_PATHS[cat] || CATEGORY_SVG_PATHS['Other'];
             return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
@@ -3202,11 +3282,89 @@
         let isSplitMode = false;
         let splitRows = [];
         let duplicateConfirmResolver = null;
+        let appDialogResolver = null;
         let hasCompletedInitialSplash = false;
 
-                // Minimum hold time so the splash logo pop-in is crisp before morphing
+        // Minimum hold time so the splash logo pop-in is crisp before morphing
         const splashHoldPromise = new Promise(resolve => setTimeout(resolve, 1450));
 
+        // ==================== UNIFIED DIALOG CONTROLLER ====================
+        function showAppDialog({
+            variant = 'info',
+            icon = null,
+            title = 'Notice',
+            subtitle = 'PaperTrail',
+            message = '',
+            summary = null,
+            confirmText = 'OK',
+            cancelText = null
+        }) {
+            return new Promise((resolve) => {
+                appDialogResolver = resolve;
+
+                const badgeEl = document.getElementById('appDialogIconBadge');
+                const kickerEl = document.getElementById('appDialogKicker');
+                const titleEl = document.getElementById('appDialogTitle');
+                const msgEl = document.getElementById('appDialogMessage');
+                const sumCard = document.getElementById('appDialogSummaryCard');
+                const actionsEl = document.getElementById('appDialogActions');
+                const cancelBtn = document.getElementById('appDialogCancelBtn');
+                const confirmBtn = document.getElementById('appDialogConfirmBtn');
+
+                badgeEl.className = `confirm-icon-badge ${variant}`;
+                badgeEl.innerHTML = DIALOG_ICONS[icon || variant] || DIALOG_ICONS.info;
+
+                kickerEl.className = `confirm-kicker ${variant}`;
+                kickerEl.innerText = subtitle;
+                titleEl.innerText = title;
+                msgEl.innerText = message;
+
+                if (summary) {
+                    sumCard.style.display = 'block';
+                    document.getElementById('appDialogSumLeftTop').innerText = summary.leftTop || '';
+                    const rightTopEl = document.getElementById('appDialogSumRightTop');
+                    rightTopEl.innerText = summary.rightTop || '';
+                    rightTopEl.className = `dup-amount ${summary.rightTone || ''}`.trim();
+                    document.getElementById('appDialogSumLeftBottom').innerText = summary.leftBottom || '';
+                    document.getElementById('appDialogSumRightBottom').innerText = summary.rightBottom || '';
+                } else {
+                    sumCard.style.display = 'none';
+                }
+
+                confirmBtn.innerText = confirmText;
+                confirmBtn.className = variant === 'danger' ? 'btn-submit danger-btn' : 'btn-submit';
+
+                if (cancelText) {
+                    cancelBtn.style.display = '';
+                    cancelBtn.innerText = cancelText;
+                    actionsEl.classList.remove('single');
+                } else {
+                    cancelBtn.style.display = 'none';
+                    actionsEl.classList.add('single');
+                }
+
+                document.getElementById('appDialogModal').classList.add('open');
+            });
+        }
+
+        function resolveAppDialog(choice) {
+            document.getElementById('appDialogModal').classList.remove('open');
+            if (appDialogResolver) {
+                const resolver = appDialogResolver;
+                appDialogResolver = null;
+                resolver(Boolean(choice));
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (document.getElementById('appDialogModal').classList.contains('open')) {
+                    resolveAppDialog(false);
+                } else if (document.getElementById('duplicateConfirmModal').classList.contains('open')) {
+                    resolveDuplicateConfirm(false);
+                }
+            }
+        });
 
         // ==================== CUSTOM CATEGORY PICKER INIT ====================
         function initCategoryPicker() {
@@ -3340,7 +3498,7 @@
         window.addEventListener('offline', () => setSyncIndicator('offline'));
 
         // ==================== SPLASH MORPH & FIREBASE AUTH FLOW ====================
-                function morphSplashIntoLoginCard(animateMorph = true) {
+        function morphSplashIntoLoginCard(animateMorph = true) {
             const overlay = document.getElementById('authOverlay');
             const splashStage = document.getElementById('splashStage');
             const splashLogoBox = document.getElementById('splashLogoBox');
@@ -3642,7 +3800,7 @@
             checkAndRolloverCycle(false);
         }
 
-                function saveLocalDeviceCache() {
+        function saveLocalDeviceCache() {
             if (!currentUser) return;
             const stateJson = JSON.stringify(state);
 
@@ -4192,14 +4350,41 @@
             renderDashboard();
         }
 
-        function manualArchiveCurrent() {
+        async function manualArchiveCurrent() {
             if (state.activeExpenses.length === 0) {
-                alert('There are no active expenses to archive right now.');
+                await showAppDialog({
+                    variant: 'info',
+                    icon: 'archive',
+                    title: 'Nothing to Archive',
+                    subtitle: 'Active trail is empty',
+                    message: 'There are no active expenses in your current cycle to archive right now.',
+                    confirmText: 'Got It'
+                });
                 return;
             }
-            if (!confirm(`Archive all ${state.activeExpenses.length} active expenses into History and start fresh at $0.00?`)) return;
 
             const total = state.activeExpenses.reduce((s, e) => s + Number(e.amount), 0);
+            const count = state.activeExpenses.length;
+
+            const confirmed = await showAppDialog({
+                variant: 'info',
+                icon: 'archive',
+                title: 'Archive Current Cycle',
+                subtitle: 'Close period early',
+                message: 'Move all active expenses into History and reset your current cycle counter to $0.00?',
+                summary: {
+                    leftTop: state.activeCycleLabel || 'Current Cycle',
+                    rightTop: formatMoney(total),
+                    rightTone: 'mint',
+                    leftBottom: `${count} ${count === 1 ? 'expense' : 'expenses'}`,
+                    rightBottom: 'History Archive'
+                },
+                confirmText: 'Archive Cycle',
+                cancelText: 'Cancel'
+            });
+
+            if (!confirmed) return;
+
             state.history.unshift({
                 id: 'arc_' + Date.now(),
                 mode: state.settings.cycleMode,
@@ -4399,7 +4584,7 @@
             applyReceiptPreviewAndScan(compressedDataUrl);
         }
 
-                function handleReceiptFile(input) {
+        function handleReceiptFile(input) {
             const file = input.files && input.files[0];
             if (!file) return;
 
@@ -4449,7 +4634,7 @@
             scanReceiptWithAI(pendingReceiptDataUrl);
         }
 
-                async function scanReceiptWithAI(dataUrl) {
+        async function scanReceiptWithAI(dataUrl) {
             if (activeScanAbortController) {
                 activeScanAbortController.abort();
             }
@@ -4566,7 +4751,7 @@
             setScanStatus(null, '');
         }
 
-                function toggleSplitMode(forceState) {
+        function toggleSplitMode(forceState) {
             isSplitMode = typeof forceState === 'boolean' ? forceState : !isSplitMode;
 
             const panel = document.getElementById('splitBuilderPanel');
@@ -4674,15 +4859,13 @@
             }
         }
 
-        
         async function openExpenseModal(editId = null) {
             const form = document.getElementById('expenseForm');
             form.reset();
             clearReceiptImage();
             handlePaymentChange('Apple Pay');
-                        toggleSplitMode(false);
+            toggleSplitMode(false);
             document.getElementById('splitToggleRow').style.display = editId ? 'none' : 'flex';
-
 
             if (editId) {
                 const item = state.activeExpenses.find(e => e.id === editId);
@@ -4740,39 +4923,39 @@
             document.getElementById(id).classList.remove('open');
         }
 
-                function handleBackdropClose(e, id) {
+        function handleBackdropClose(e, id) {
             if (e.target.id === id) closeModal(id);
         }
 
         function showDuplicateConfirmModal(duplicate) {
-    return new Promise((resolve) => {
-        duplicateConfirmResolver = resolve;
+            return new Promise((resolve) => {
+                duplicateConfirmResolver = resolve;
 
-        const formattedDate = duplicate.date
-            ? parseLocalDate(duplicate.date).toLocaleDateString('en-US', {
-                  month: 'short',
-                  day: 'numeric',
-                  year: 'numeric'
-              })
-            : '';
+                const formattedDate = duplicate.date
+                    ? parseLocalDate(duplicate.date).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric'
+                      })
+                    : '';
 
-        document.getElementById('dupMerchant').innerText = duplicate.title || 'Untitled Expense';
-        document.getElementById('dupAmount').innerText = formatMoney(duplicate.amount);
-        document.getElementById('dupDate').innerText = formattedDate;
-        document.getElementById('dupLocation').innerText = duplicate._location || 'Active Trail';
+                document.getElementById('dupMerchant').innerText = duplicate.title || 'Untitled Expense';
+                document.getElementById('dupAmount').innerText = formatMoney(duplicate.amount);
+                document.getElementById('dupDate').innerText = formattedDate;
+                document.getElementById('dupLocation').innerText = duplicate._location || 'Active Trail';
 
-        document.getElementById('duplicateConfirmModal').classList.add('open');
-    });
-}
+                document.getElementById('duplicateConfirmModal').classList.add('open');
+            });
+        }
 
-function resolveDuplicateConfirm(choice) {
-    document.getElementById('duplicateConfirmModal').classList.remove('open');
-    if (duplicateConfirmResolver) {
-        const resolver = duplicateConfirmResolver;
-        duplicateConfirmResolver = null;
-        resolver(Boolean(choice));
-    }
-}
+        function resolveDuplicateConfirm(choice) {
+            document.getElementById('duplicateConfirmModal').classList.remove('open');
+            if (duplicateConfirmResolver) {
+                const resolver = duplicateConfirmResolver;
+                duplicateConfirmResolver = null;
+                resolver(Boolean(choice));
+            }
+        }
 
         async function saveExpense(e) {
             e.preventDefault();
@@ -4789,7 +4972,7 @@ function resolveDuplicateConfirm(choice) {
             const payment = rawPayment === '__custom__' ? (customPayment || 'Custom') : rawPayment;
             const note = document.getElementById('expNote').value.trim();
 
-                        if (isNaN(amount) || amount <= 0 || !title) return;
+            if (isNaN(amount) || amount <= 0 || !title) return;
 
             // Validate multi-category splits before checking for duplicates
             let validSplits = [];
@@ -4803,13 +4986,32 @@ function resolveDuplicateConfirm(choice) {
                     .filter(r => !isNaN(r.amount) && r.amount > 0);
 
                 if (validSplits.length < 2) {
-                    alert('Please enter valid amounts for at least 2 split categories.');
+                    await showAppDialog({
+                        variant: 'warn',
+                        title: 'Incomplete Split',
+                        subtitle: 'At least 2 categories required',
+                        message: 'Please enter valid dollar amounts for at least 2 split categories before saving.',
+                        confirmText: 'Got It'
+                    });
                     return;
                 }
 
                 const splitTotal = validSplits.reduce((sum, r) => sum + r.amount, 0);
                 if (Math.abs(splitTotal - amount) >= 0.01) {
-                    alert(`Split amounts (${formatMoney(splitTotal)}) must equal the receipt total (${formatMoney(amount)}).`);
+                    const diff = Math.abs(amount - splitTotal);
+                    await showAppDialog({
+                        variant: 'warn',
+                        title: 'Split Total Mismatch',
+                        subtitle: 'Amounts must match receipt',
+                        message: 'Your split category amounts must add up to the exact receipt total before saving.',
+                        summary: {
+                            leftTop: 'Receipt Total',
+                            rightTop: formatMoney(amount),
+                            leftBottom: `Split Sum: ${formatMoney(splitTotal)}`,
+                            rightBottom: `${formatMoney(diff)} ${splitTotal > amount ? 'over' : 'short'}`
+                        },
+                        confirmText: 'Adjust Splits'
+                    });
                     return;
                 }
             }
@@ -4839,97 +5041,120 @@ function resolveDuplicateConfirm(choice) {
             if (saveBtn) saveBtn.disabled = true;
 
             try {
-            // Handle Multi-Category Split Save
-            if (isSplitMode && !editId) {
+                // Handle Multi-Category Split Save
+                if (isSplitMode && !editId) {
+                    const baseTs = Date.now();
+                    const hasReceipt = Boolean(pendingReceiptDataUrl);
 
+                    validSplits.reverse().forEach((sp, idx) => {
+                        const splitId = `exp_${baseTs}_${idx}`;
+                        if (hasReceipt) {
+                            receiptCache[splitId] = pendingReceiptDataUrl;
+                            setDoc(doc(db, 'users', currentUser.uid, 'receipts', splitId), {
+                                dataUrl: pendingReceiptDataUrl,
+                                updatedAt: baseTs
+                            }).catch(err => console.error('Split receipt upload failed:', err));
+                        }
 
-                const baseTs = Date.now();
+                        const combinedNote = [sp.note, note].filter(Boolean).join(' • ') || `Split receipt (${formatMoney(amount)} total)`;
+
+                        state.activeExpenses.unshift({
+                            id: splitId,
+                            amount: sp.amount,
+                            title,
+                            category: sp.category,
+                            date,
+                            payment,
+                            note: combinedNote,
+                            hasReceipt,
+                            createdAt: baseTs + idx
+                        });
+                    });
+
+                    closeModal('expenseModal');
+                    switchView('dashboard');
+                    await syncStateToCloud();
+                    return;
+                }
+
+                const expenseId = editId || ('exp_' + Date.now());
                 const hasReceipt = Boolean(pendingReceiptDataUrl);
 
-                validSplits.reverse().forEach((sp, idx) => {
-                    const splitId = `exp_${baseTs}_${idx}`;
-                    if (hasReceipt) {
-                        receiptCache[splitId] = pendingReceiptDataUrl;
-                        setDoc(doc(db, 'users', currentUser.uid, 'receipts', splitId), {
-                            dataUrl: pendingReceiptDataUrl,
-                            updatedAt: baseTs
-                        }).catch(err => console.error('Split receipt upload failed:', err));
+                if (hasReceipt) {
+                    receiptCache[expenseId] = pendingReceiptDataUrl;
+                    setDoc(doc(db, 'users', currentUser.uid, 'receipts', expenseId), {
+                        dataUrl: pendingReceiptDataUrl,
+                        updatedAt: Date.now()
+                    }).catch(err => console.error('Receipt upload queued/failed:', err));
+                } else if (editId) {
+                    delete receiptCache[expenseId];
+                    deleteDoc(doc(db, 'users', currentUser.uid, 'receipts', expenseId)).catch(() => {});
+                }
+
+                if (editId) {
+                    const idx = state.activeExpenses.findIndex(item => item.id === editId);
+                    if (idx !== -1) {
+                        state.activeExpenses[idx] = {
+                            ...state.activeExpenses[idx],
+                            amount,
+                            title,
+                            category,
+                            date,
+                            payment,
+                            note,
+                            hasReceipt
+                        };
                     }
-
-                    const combinedNote = [sp.note, note].filter(Boolean).join(' • ') || `Split receipt (${formatMoney(amount)} total)`;
-
+                } else {
                     state.activeExpenses.unshift({
-                        id: splitId,
-                        amount: sp.amount,
-                        title,
-                        category: sp.category,
-                        date,
-                        payment,
-                        note: combinedNote,
-                        hasReceipt,
-                        createdAt: baseTs + idx
-                    });
-                });
-
-                closeModal('expenseModal');
-                switchView('dashboard');
-                await syncStateToCloud();
-                return;
-            }
-
-            const expenseId = editId || ('exp_' + Date.now());
-            const hasReceipt = Boolean(pendingReceiptDataUrl);
-
-            if (hasReceipt) {
-                receiptCache[expenseId] = pendingReceiptDataUrl;
-                setDoc(doc(db, 'users', currentUser.uid, 'receipts', expenseId), {
-                    dataUrl: pendingReceiptDataUrl,
-                    updatedAt: Date.now()
-                }).catch(err => console.error('Receipt upload queued/failed:', err));
-            } else if (editId) {
-                delete receiptCache[expenseId];
-                deleteDoc(doc(db, 'users', currentUser.uid, 'receipts', expenseId)).catch(() => {});
-            }
-
-            if (editId) {
-                const idx = state.activeExpenses.findIndex(item => item.id === editId);
-                if (idx !== -1) {
-                    state.activeExpenses[idx] = {
-                        ...state.activeExpenses[idx],
+                        id: expenseId,
                         amount,
                         title,
                         category,
                         date,
                         payment,
                         note,
-                        hasReceipt
-                    };
+                        hasReceipt,
+                        createdAt: Date.now()
+                    });
                 }
-            } else {
-                state.activeExpenses.unshift({
-                    id: expenseId,
-                    amount,
-                    title,
-                    category,
-                    date,
-                    payment,
-                    note,
-                    hasReceipt,
-                    createdAt: Date.now()
-                });
-            }
 
-            closeModal('expenseModal');
-            switchView('dashboard');
-            await syncStateToCloud();
+                closeModal('expenseModal');
+                switchView('dashboard');
+                await syncStateToCloud();
             } finally {
                 if (saveBtn) saveBtn.disabled = false;
             }
         }
 
-
         async function deleteExpense(id) {
-            if (!confirm('Delete this expense from your device and cloud vault?')) return;
+            const target = state.activeExpenses.find(e => e.id === id);
+            const formattedDate = target && target.date
+                ? parseLocalDate(target.date).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric'
+                  })
+                : '';
+
+            const confirmed = await showAppDialog({
+                variant: 'danger',
+                title: 'Delete Expense',
+                subtitle: 'Permanent removal',
+                message: 'Delete this expense from your device and cloud vault? This action cannot be undone.',
+                summary: target ? {
+                    leftTop: target.title || 'Untitled Expense',
+                    rightTop: formatMoney(target.amount),
+                    rightTone: 'danger',
+                    leftBottom: `${formattedDate} • ${target.category}`,
+                    rightBottom: (target.hasReceipt || target.receipt || receiptCache[id]) ? 'Has Receipt' : (target.payment || 'Active Trail')
+                } : null,
+                confirmText: 'Delete',
+                cancelText: 'Cancel'
+            });
+
+            if (!confirmed) return;
+
             state.activeExpenses = state.activeExpenses.filter(e => e.id !== id);
             delete receiptCache[id];
             if (currentUser) {
@@ -4987,12 +5212,18 @@ function resolveDuplicateConfirm(choice) {
                 imgEl.style.display = 'block';
             } else {
                 closeModal('receiptViewerModal');
-                alert('Receipt image could not be loaded (check your connection if this photo was captured on another device).');
+                await showAppDialog({
+                    variant: 'warn',
+                    title: 'Receipt Unavailable',
+                    subtitle: 'Could not load image',
+                    message: 'Receipt image could not be loaded. Check your connection if this photo was captured on another device.',
+                    confirmText: 'Close'
+                });
             }
         }
 
         // ==================== EXPORT & STORAGE UTILITIES ====================
-        function exportCSV(scope) {
+        async function exportCSV(scope) {
             let rows = [];
             let filename = 'papertrail_export.csv';
 
@@ -5012,7 +5243,13 @@ function resolveDuplicateConfirm(choice) {
             }
 
             if (rows.length === 0) {
-                alert('No expenses available to export.');
+                await showAppDialog({
+                    variant: 'info',
+                    title: 'Nothing to Export',
+                    subtitle: 'No entries found',
+                    message: 'There are no recorded expenses available in this selection to export as a CSV spreadsheet.',
+                    confirmText: 'Got It'
+                });
                 return;
             }
 
@@ -5038,7 +5275,9 @@ function resolveDuplicateConfirm(choice) {
             const a = document.createElement('a');
             a.href = url;
             a.download = filename;
+            document.body.appendChild(a);
             a.click();
+            a.remove();
             URL.revokeObjectURL(url);
         }
 
@@ -5054,7 +5293,9 @@ function resolveDuplicateConfirm(choice) {
             const a = document.createElement('a');
             a.href = url;
             a.download = `PaperTrail_Backup_${toLocalDateStr(new Date())}.json`;
+            document.body.appendChild(a);
             a.click();
+            a.remove();
             URL.revokeObjectURL(url);
         }
 
@@ -5077,7 +5318,30 @@ function resolveDuplicateConfirm(choice) {
 
         async function clearAllData() {
             if (!currentUser) return;
-            if (!confirm('Erase all active expenses and archived history from both this device and your cloud vault? This cannot be undone.')) return;
+
+            const activeCount = state.activeExpenses.length;
+            const archivedCount = state.history.reduce((sum, arc) => sum + (arc.items ? arc.items.length : 0), 0);
+            const totalEntries = activeCount + archivedCount;
+
+            const confirmed = await showAppDialog({
+                variant: 'danger',
+                icon: 'warn',
+                title: 'Reset All Trail Data',
+                subtitle: 'Permanent wipe • Cannot be undone',
+                message: 'Erase all active expenses and archived history from both this device and your cloud vault?',
+                summary: {
+                    leftTop: 'Entire Trail Vault',
+                    rightTop: `${totalEntries} ${totalEntries === 1 ? 'entry' : 'entries'}`,
+                    rightTone: 'danger',
+                    leftBottom: `${activeCount} active • ${state.history.length} archived ${state.history.length === 1 ? 'cycle' : 'cycles'}`,
+                    rightBottom: 'Device & Cloud'
+                },
+                confirmText: 'Erase All Data',
+                cancelText: 'Cancel'
+            });
+
+            if (!confirmed) return;
+
             const preservedTheme = state.settings.theme;
             state = createDefaultState();
             state.settings.theme = preservedTheme;
@@ -5086,10 +5350,17 @@ function resolveDuplicateConfirm(choice) {
             saveLocalDeviceCache();
             await syncStateToCloud();
             renderDashboard();
-            alert('All trail data cleared.');
+
+            await showAppDialog({
+                variant: 'success',
+                title: 'Trail Data Cleared',
+                subtitle: 'Fresh start ready',
+                message: 'All active expenses and archived history have been erased from your device and cloud vault.',
+                confirmText: 'Done'
+            });
         }
 
-                function escapeHtml(str) {
+        function escapeHtml(str) {
             return String(str ?? '')
                 .replace(/&/g, '&amp;')
                 .replace(/</g, '&lt;')
@@ -5108,6 +5379,7 @@ function resolveDuplicateConfirm(choice) {
         // Expose functions to global window for HTML inline handlers
         Object.assign(window, {
             resolveDuplicateConfirm,
+            resolveAppDialog,
             switchView,
             dismissRolloverBanner,
             exportCSV,
