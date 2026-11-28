@@ -50,71 +50,97 @@ module.exports = async function handler(req, res) {
             'Analyze this receipt image and extract the expense details.',
             'Rules:',
             '- merchant: Clean store, restaurant, or vendor name (e.g. "Costco", "Sheetz", "Target").',
-            '- amount: Final total amount paid (including tax and tip if shown) as a positive number.',
+            '- amount: Final total amount actually paid after tax and tip (use the final paid/charged total, not pre-tax subtotal) as a positive number.',
             '- date: Transaction date in YYYY-MM-DD format if clearly visible; otherwise empty string "".',
             '- category: Choose the single best matching category from the allowed enum list.',
             '- payment: Payment method if shown on receipt ("Apple Pay", "Google Pay", "Credit Card", "Debit Card", "Cash", "Gift Card"), otherwise empty string "".',
             '- note: Short, helpful summary of 1 to 3 key items purchased (under 60 characters), or empty string "" if unreadable.'
         ].join('\n');
 
-        const geminiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent';
-
-        const geminiResponse = await fetch(geminiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-goog-api-key': apiKey
-            },
-            body: JSON.stringify({
-                contents: [
-                    {
-                        role: 'user',
-                        parts: [
-                            { text: prompt },
-                            {
-                                inlineData: {
-                                    mimeType: safeMimeType,
-                                    data: imageBase64
-                                }
+        const requestPayload = {
+            contents: [
+                {
+                    role: 'user',
+                    parts: [
+                        { text: prompt },
+                        {
+                            inlineData: {
+                                mimeType: safeMimeType,
+                                data: imageBase64
                             }
-                        ]
-                    }
-                ],
-                generationConfig: {
-                    temperature: 0.1,
-                    responseMimeType: 'application/json',
-                    responseSchema: {
-                        type: 'OBJECT',
-                        properties: {
-                            merchant: { type: 'STRING' },
-                            amount: { type: 'NUMBER' },
-                            date: { type: 'STRING' },
-                            category: {
-                                type: 'STRING',
-                                enum: categories
-                            },
-                            payment: { type: 'STRING' },
-                            note: { type: 'STRING' }
-                        },
-                        required: ['merchant', 'amount', 'date', 'category', 'payment', 'note']
-                    }
+                        }
+                    ]
                 }
-            })
-        });
+            ],
+            generationConfig: {
+                temperature: 0.1,
+                responseMimeType: 'application/json',
+                responseSchema: {
+                    type: 'OBJECT',
+                    properties: {
+                        merchant: { type: 'STRING' },
+                        amount: { type: 'NUMBER' },
+                        date: { type: 'STRING' },
+                        category: {
+                            type: 'STRING',
+                            enum: categories
+                        },
+                        payment: { type: 'STRING' },
+                        note: { type: 'STRING' }
+                    },
+                    required: ['merchant', 'amount', 'date', 'category', 'payment', 'note']
+                }
+            }
+        };
 
-        const rawResult = await geminiResponse.json();
+        // Try fast high-availability Lite model first, then fall back to standard Flash
+        const modelsToTry = ['gemini-3.8-flash-lite', 'gemini-3.8-flash'];
+        let textOutput = '';
+        let lastError = 'Gemini API request failed.';
+        let lastStatus = 502;
 
-        if (!geminiResponse.ok) {
-            const apiErrMsg = rawResult?.error?.message || `Gemini API error (${geminiResponse.status})`;
-            return res.status(geminiResponse.status).json({ error: apiErrMsg });
+        for (let i = 0; i < modelsToTry.length; i++) {
+            const model = modelsToTry[i];
+            const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+
+            const geminiResponse = await fetch(geminiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-goog-api-key': apiKey
+                },
+                body: JSON.stringify(requestPayload)
+            });
+
+            const rawResult = await geminiResponse.json();
+
+            if (geminiResponse.ok) {
+                textOutput = rawResult?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                if (textOutput) break;
+                lastError = `Empty response from ${model}.`;
+                lastStatus = 502;
+                continue;
+            }
+
+            lastStatus = geminiResponse.status;
+            lastError = rawResult?.error?.message || `Gemini API error (${geminiResponse.status})`;
+
+            // Retry on next model if rate-limited (429), overloaded (503), or model unavailable (404)
+            if ([404, 429, 503].includes(geminiResponse.status) && i < modelsToTry.length - 1) {
+                await new Promise(resolve => setTimeout(resolve, 600));
+                continue;
+            }
+
+            return res.status(lastStatus).json({ error: lastError });
         }
 
-        const textOutput = rawResult?.candidates?.[0]?.content?.parts?.[0]?.text;
         if (!textOutput) {
-            return res.status(502).json({ error: 'Gemini returned an empty response for this receipt.' });
+            return res.status(lastStatus).json({ error: lastError });
         }
 
-        const extracted = JSON.parse(textOutput);
+        const cleanJson = textOutput.replace(/^```json\s*|\s*```$/g, '').trim();
+        const extracted = JSON.parse(cleanJson);
+
         return res.status(200).json({
             merchant: String(extracted.merchant || '').trim(),
             amount: Number(extracted.amount) || 0,
@@ -130,4 +156,3 @@ module.exports = async function handler(req, res) {
         });
     }
 };
-
