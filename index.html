@@ -1922,10 +1922,36 @@
             outline: none;
         }
 
-        .form-grid-2 {
+                .form-grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
+        }
+
+        .form-grid-2 > .field-group {
+            min-width: 0;
+        }
+
+        .cat-select-trigger {
+            height: 42px;
+        }
+
+        input[type="date"].text-input {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            height: 42px;
+            padding: 0 12px;
+            display: flex;
+            align-items: center;
+            text-align: left;
+        }
+
+        input[type="date"].text-input::-webkit-date-and-time-value {
+            text-align: left;
+            margin: 0;
         }
 
         /* Receipt Capture & AI Scanner Zone */
@@ -4280,7 +4306,7 @@
             document.getElementById(id).classList.remove('open');
         }
 
-        function handleBackdropClose(e, id) {
+                function handleBackdropClose(e, id) {
             if (e.target.id === id) closeModal(id);
         }
 
@@ -4300,6 +4326,32 @@
             const note = document.getElementById('expNote').value.trim();
 
             if (isNaN(amount) || amount <= 0 || !title) return;
+
+            // Check for duplicate expense (same amount & date) across Active Trail and History
+            if (!editId) {
+                const allExisting = [
+                    ...state.activeExpenses.map(item => ({ ...item, _location: 'Active Trail' })),
+                    ...state.history.flatMap(arc =>
+                        (arc.items || []).map(item => ({ ...item, _location: `History (${arc.label})` }))
+                    )
+                ];
+
+                const duplicate = allExisting.find(item => {
+                    const sameAmount = Math.abs(Number(item.amount) - amount) < 0.01;
+                    const sameDate = item.date === date;
+                    return sameAmount && sameDate;
+                });
+
+                if (duplicate) {
+                    const saveAnyway = confirm(
+                        `Possible duplicate receipt detected:\n\n` +
+                        `• Existing: ${duplicate.title} (${formatMoney(duplicate.amount)}) on ${duplicate.date}\n` +
+                        `• Found in: ${duplicate._location}\n\n` +
+                        `Save this entry anyway?`
+                    );
+                    if (!saveAnyway) return;
+                }
+            }
 
             const expenseId = editId || ('exp_' + Date.now());
             const hasReceipt = Boolean(pendingReceiptDataUrl);
