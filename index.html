@@ -2278,6 +2278,140 @@
             cursor: not-allowed;
         }
 
+                /* Custom Duplicate Confirmation Dialog */
+        .confirm-backdrop {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-backdrop);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 80;
+        }
+
+        .confirm-backdrop.open {
+            display: flex;
+        }
+
+        .confirm-dialog {
+            width: 100%;
+            max-width: 390px;
+            background: var(--bg-sheet);
+            border: 1px solid var(--border-strong);
+            border-radius: 22px;
+            padding: 22px 20px 20px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.42);
+            animation: confirmPop 0.22s cubic-bezier(0.22, 1.2, 0.36, 1);
+        }
+
+        @keyframes confirmPop {
+            from { opacity: 0; transform: scale(0.93) translateY(8px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .confirm-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .confirm-warn-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: rgba(217, 155, 56, 0.14);
+            border: 1px solid rgba(217, 155, 56, 0.32);
+            color: var(--warning);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .confirm-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.02em;
+        }
+
+        .confirm-sub {
+            font-size: 12.5px;
+            color: var(--text-secondary);
+            line-height: 1.45;
+            margin-bottom: 14px;
+        }
+
+        .dup-summary-card {
+            background: var(--bg-input);
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
+            margin-bottom: 16px;
+        }
+
+        .dup-top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+
+        .dup-merchant {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .dup-amount {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--warning);
+            flex-shrink: 0;
+        }
+
+        .dup-meta-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .dup-location-pill {
+            font-size: 10.5px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: var(--icon-bg);
+            border: 1px solid var(--icon-border);
+            color: var(--cyan);
+        }
+
+        .confirm-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .confirm-actions .btn-secondary,
+        .confirm-actions .btn-submit {
+            margin-top: 0;
+            min-width: 0;
+            padding: 12px 14px;
+            font-size: 13.5px;
+        }
+
         /* Receipt Viewer Lightbox */
         .lightbox-img {
             width: 100%;
@@ -2895,6 +3029,43 @@
         </div>
     </div>
 
+        <!-- ==================== MODAL: DUPLICATE RECEIPT CONFIRMATION ==================== -->
+    <div class="confirm-backdrop" id="duplicateConfirmModal" onclick="if (event.target === this) resolveDuplicateConfirm(false)">
+        <div class="confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="dupModalTitle">
+            <div class="confirm-header">
+                <div class="confirm-warn-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="confirm-title" id="dupModalTitle">Possible Duplicate</div>
+                    <div style="font-size:11.5px; color:var(--warning); font-weight:600;">Matching amount &amp; date found</div>
+                </div>
+            </div>
+
+            <p class="confirm-sub">An expense with the same total and date is already logged in your trail. Do you want to save this entry anyway?</p>
+
+            <div class="dup-summary-card">
+                <div class="dup-top-row">
+                    <span class="dup-merchant" id="dupMerchant">Fuel Depot</span>
+                    <span class="dup-amount" id="dupAmount">$0.00</span>
+                </div>
+                <div class="dup-meta-row">
+                    <span id="dupDate">Jul 10, 2020</span>
+                    <span class="dup-location-pill" id="dupLocation">Active Trail</span>
+                </div>
+            </div>
+
+            <div class="confirm-actions">
+                <button type="button" class="btn-secondary" onclick="resolveDuplicateConfirm(false)">Cancel</button>
+                <button type="button" class="btn-submit" onclick="resolveDuplicateConfirm(true)">Save Anyway</button>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
         import {
@@ -3030,6 +3201,7 @@
         let activeScanAbortController = null;
         let isSplitMode = false;
         let splitRows = [];
+        let duplicateConfirmResolver = null;
         let hasCompletedInitialSplash = false;
 
                 // Minimum hold time so the splash logo pop-in is crisp before morphing
@@ -4572,6 +4744,36 @@
             if (e.target.id === id) closeModal(id);
         }
 
+        function showDuplicateConfirmModal(duplicate) {
+    return new Promise((resolve) => {
+        duplicateConfirmResolver = resolve;
+
+        const formattedDate = duplicate.date
+            ? parseLocalDate(duplicate.date).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric'
+              })
+            : '';
+
+        document.getElementById('dupMerchant').innerText = duplicate.title || 'Untitled Expense';
+        document.getElementById('dupAmount').innerText = formatMoney(duplicate.amount);
+        document.getElementById('dupDate').innerText = formattedDate;
+        document.getElementById('dupLocation').innerText = duplicate._location || 'Active Trail';
+
+        document.getElementById('duplicateConfirmModal').classList.add('open');
+    });
+}
+
+function resolveDuplicateConfirm(choice) {
+    document.getElementById('duplicateConfirmModal').classList.remove('open');
+    if (duplicateConfirmResolver) {
+        const resolver = duplicateConfirmResolver;
+        duplicateConfirmResolver = null;
+        resolver(Boolean(choice));
+    }
+}
+
         async function saveExpense(e) {
             e.preventDefault();
             if (!currentUser) return;
@@ -4587,37 +4789,12 @@
             const payment = rawPayment === '__custom__' ? (customPayment || 'Custom') : rawPayment;
             const note = document.getElementById('expNote').value.trim();
 
-            if (isNaN(amount) || amount <= 0 || !title) return;
+                        if (isNaN(amount) || amount <= 0 || !title) return;
 
-            // Check for duplicate expense (same amount & date) across Active Trail and History
-            if (!editId) {
-                const allExisting = [
-                    ...state.activeExpenses.map(item => ({ ...item, _location: 'Active Trail' })),
-                    ...state.history.flatMap(arc =>
-                        (arc.items || []).map(item => ({ ...item, _location: `History (${arc.label})` }))
-                    )
-                ];
-
-                const duplicate = allExisting.find(item => {
-                    const sameAmount = Math.abs(Number(item.amount) - amount) < 0.01;
-                    const sameDate = item.date === date;
-                    return sameAmount && sameDate;
-                });
-
-                if (duplicate) {
-                    const saveAnyway = confirm(
-                        `Possible duplicate receipt detected:\n\n` +
-                        `• Existing: ${duplicate.title} (${formatMoney(duplicate.amount)}) on ${duplicate.date}\n` +
-                        `• Found in: ${duplicate._location}\n\n` +
-                        `Save this entry anyway?`
-                    );
-                    if (!saveAnyway) return;
-                }
-            }
-
-                        // Handle Multi-Category Split Save
+            // Validate multi-category splits before checking for duplicates
+            let validSplits = [];
             if (isSplitMode && !editId) {
-                const validSplits = splitRows
+                validSplits = splitRows
                     .map(r => ({
                         category: r.category || 'Other',
                         amount: parseFloat(r.amount),
@@ -4635,6 +4812,36 @@
                     alert(`Split amounts (${formatMoney(splitTotal)}) must equal the receipt total (${formatMoney(amount)}).`);
                     return;
                 }
+            }
+
+            // Check for duplicate expense (same amount & date) across Active Trail and History
+            if (!editId) {
+                const allExisting = [
+                    ...state.activeExpenses.map(item => ({ ...item, _location: 'Active Trail' })),
+                    ...state.history.flatMap(arc =>
+                        (arc.items || []).map(item => ({ ...item, _location: `History (${arc.label})` }))
+                    )
+                ];
+
+                const duplicate = allExisting.find(item => {
+                    const sameAmount = Math.abs(Number(item.amount) - amount) < 0.01;
+                    const sameDate = item.date === date;
+                    return sameAmount && sameDate;
+                });
+
+                if (duplicate) {
+                    const saveAnyway = await showDuplicateConfirmModal(duplicate);
+                    if (!saveAnyway) return;
+                }
+            }
+
+            const saveBtn = document.getElementById('saveExpenseBtn');
+            if (saveBtn) saveBtn.disabled = true;
+
+            try {
+            // Handle Multi-Category Split Save
+            if (isSplitMode && !editId) {
+
 
                 const baseTs = Date.now();
                 const hasReceipt = Boolean(pendingReceiptDataUrl);
@@ -4715,7 +4922,11 @@
             closeModal('expenseModal');
             switchView('dashboard');
             await syncStateToCloud();
+            } finally {
+                if (saveBtn) saveBtn.disabled = false;
+            }
         }
+
 
         async function deleteExpense(id) {
             if (!confirm('Delete this expense from your device and cloud vault?')) return;
@@ -4878,20 +5089,25 @@
             alert('All trail data cleared.');
         }
 
-        function escapeHtml(str) {
-            return String(str)
+                function escapeHtml(str) {
+            return String(str ?? '')
                 .replace(/&/g, '&amp;')
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;');
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
         }
 
         function escapeAttr(str) {
-            return String(str).replace(/'/g, "\\'");
+            return String(str ?? '')
+                .replace(/\\/g, '\\\\')
+                .replace(/'/g, "\\'")
+                .replace(/"/g, '&quot;');
         }
 
         // Expose functions to global window for HTML inline handlers
         Object.assign(window, {
+            resolveDuplicateConfirm,
             switchView,
             dismissRolloverBanner,
             exportCSV,
