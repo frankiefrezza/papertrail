@@ -891,9 +891,219 @@
             transition: background 0.18s ease, border-color 0.18s ease;
         }
 
+                .expense-item {
+            cursor: pointer;
+        }
+
         .expense-item:hover {
             background: var(--bg-card-hover);
             border-color: var(--border-strong);
+        }
+
+        .history-mini-item {
+            cursor: pointer;
+            border-radius: 8px;
+            padding-left: 6px;
+            padding-right: 6px;
+            transition: background 0.15s ease;
+        }
+
+        .history-mini-item:hover {
+            background: var(--bg-card-hover);
+        }
+
+        /* ==================== EXPENSE DETAIL POPUP ==================== */
+        .detail-hero {
+            background: var(--bg-input);
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-bottom: 14px;
+        }
+
+        .detail-hero-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .detail-identity {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .detail-cat-badge {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: var(--icon-bg);
+            border: 1px solid var(--icon-border);
+            color: var(--cyan);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .detail-merchant {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text-main);
+            line-height: 1.3;
+            word-break: break-word;
+        }
+
+        .detail-full-date {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 3px;
+        }
+
+        .detail-status-pill {
+            font-size: 10.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 4px 9px;
+            border-radius: 999px;
+            background: var(--accent-soft);
+            border: 1px solid var(--accent-border);
+            color: var(--mint);
+            flex-shrink: 0;
+        }
+
+        .detail-status-pill.archived {
+            background: var(--icon-bg);
+            border-color: var(--icon-border);
+            color: var(--cyan);
+        }
+
+        .detail-amount-row {
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+        }
+
+        .detail-amount-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+        }
+
+        .detail-amount-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 30px;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            color: var(--text-main);
+        }
+
+        .detail-meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .detail-meta-box {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 11px 12px;
+            min-width: 0;
+        }
+
+        .detail-meta-label {
+            font-size: 10.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .detail-meta-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+            word-break: break-word;
+        }
+
+        .detail-section-box {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 13px 14px;
+            margin-bottom: 14px;
+        }
+
+        .detail-note-text {
+            font-size: 13.5px;
+            color: var(--text-main);
+            line-height: 1.55;
+            white-space: pre-wrap;
+            word-break: break-word;
+            margin-top: 4px;
+        }
+
+        .detail-receipt-frame {
+            position: relative;
+            margin-top: 8px;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            border: 1px solid var(--border-strong);
+            background: #080b10;
+            cursor: pointer;
+        }
+
+        .detail-receipt-img {
+            width: 100%;
+            max-height: 240px;
+            object-fit: cover;
+            display: block;
+            transition: opacity 0.2s ease;
+        }
+
+        .detail-receipt-frame:hover .detail-receipt-img {
+            opacity: 0.9;
+        }
+
+        .detail-receipt-zoom-tag {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background: rgba(12, 16, 23, 0.86);
+            color: #f1f5f9;
+            border: 1px solid rgba(148, 163, 184, 0.28);
+            border-radius: 7px;
+            padding: 4px 9px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .detail-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .detail-actions .btn-secondary {
+            margin-top: 0;
+            min-width: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
         }
 
         .exp-left {
@@ -3055,8 +3265,89 @@
         </div>
     </div>
 
+        <!-- ==================== MODAL: EXPENSE DETAIL POPUP ==================== -->
+    <div class="modal-backdrop" id="expenseDetailModal" onclick="handleBackdropClose(event, 'expenseDetailModal')">
+        <div class="sheet">
+            <div class="sheet-header">
+                <div class="sheet-title">Expense Details</div>
+                <button class="close-btn" onclick="closeModal('expenseDetailModal')">&times;</button>
+            </div>
+
+            <div class="detail-hero">
+                <div class="detail-hero-top">
+                    <div class="detail-identity">
+                        <div class="detail-cat-badge" id="detailCatIcon"></div>
+                        <div style="min-width:0; flex:1;">
+                            <div class="detail-merchant" id="detailMerchant">Merchant</div>
+                            <div class="detail-full-date" id="detailFullDate">Date</div>
+                        </div>
+                    </div>
+                    <span class="detail-status-pill" id="detailStatusPill">Active Trail</span>
+                </div>
+
+                <div class="detail-amount-row">
+                    <span class="detail-amount-label">Total Spent</span>
+                    <span class="detail-amount-val" id="detailAmount">$0.00</span>
+                </div>
+            </div>
+
+            <div class="detail-meta-grid">
+                <div class="detail-meta-box">
+                    <div class="detail-meta-label">Category</div>
+                    <div class="detail-meta-value" id="detailCategory">—</div>
+                </div>
+                <div class="detail-meta-box">
+                    <div class="detail-meta-label">Payment Method</div>
+                    <div class="detail-meta-value" id="detailPayment">—</div>
+                </div>
+                <div class="detail-meta-box">
+                    <div class="detail-meta-label">Cycle</div>
+                    <div class="detail-meta-value" id="detailCycle">—</div>
+                </div>
+                <div class="detail-meta-box">
+                    <div class="detail-meta-label">Time Logged</div>
+                    <div class="detail-meta-value" id="detailTimeLogged">—</div>
+                </div>
+            </div>
+
+            <div class="detail-section-box" id="detailNoteBox" style="display:none;">
+                <div class="detail-meta-label">Note</div>
+                <div class="detail-note-text" id="detailNoteText"></div>
+            </div>
+
+            <div class="detail-section-box" id="detailReceiptBox" style="display:none;">
+                <div class="detail-meta-label">Attached Receipt</div>
+                <div id="detailReceiptLoading" class="spinner" style="display:none; margin:22px auto;"></div>
+                <div class="detail-receipt-frame" id="detailReceiptFrame" style="display:none;">
+                    <img id="detailReceiptImg" class="detail-receipt-img" alt="Attached Receipt">
+                    <span class="detail-receipt-zoom-tag">Tap for Full Screen</span>
+                </div>
+                <div id="detailReceiptError" style="display:none; font-size:12px; color:var(--text-muted); margin-top:6px;">
+                    Receipt image unavailable offline.
+                </div>
+            </div>
+
+            <div class="detail-actions" id="detailActionBar">
+                <button type="button" class="btn-secondary" id="detailEditBtn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                        <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                    Edit Entry
+                </button>
+                <button type="button" class="btn-secondary btn-danger" id="detailDeleteBtn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"/>
+                        <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6m5 0V4a1 1 0 011-1h2a1 1 0 011 1v2"/>
+                    </svg>
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- ==================== MODAL: RECEIPT LIGHTBOX ==================== -->
-    <div class="modal-backdrop" id="receiptViewerModal" onclick="handleBackdropClose(event, 'receiptViewerModal')">
+    <div class="modal-backdrop" id="receiptViewerModal" style="z-index: 70;" onclick="handleBackdropClose(event, 'receiptViewerModal')">
         <div class="sheet">
             <div class="sheet-header">
                 <div>
@@ -3069,6 +3360,7 @@
             <img id="viewerImg" class="lightbox-img" alt="Saved Receipt">
         </div>
     </div>
+
 
     <!-- ==================== MODAL: DUPLICATE RECEIPT CONFIRMATION ==================== -->
     <div class="confirm-backdrop" id="duplicateConfirmModal" onclick="if (event.target === this) resolveDuplicateConfirm(false)">
@@ -4169,11 +4461,11 @@
                 return;
             }
 
-            listEl.innerHTML = filtered.map(item => {
+                        listEl.innerHTML = filtered.map(item => {
                 const niceDate = parseLocalDate(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
                 const hasImg = Boolean(item.hasReceipt || item.receipt || receiptCache[item.id]);
                 return `
-                    <div class="expense-item">
+                    <div class="expense-item" onclick="openExpenseDetail('${item.id}', 'active')">
                         <div class="exp-left">
                             <div class="exp-icon">${getCategorySvg(item.category, 18)}</div>
                             <div class="exp-info">
@@ -4184,7 +4476,7 @@
                                     <span>${escapeHtml(item.category)}</span>
                                     <span>•</span>
                                     <span>${escapeHtml(item.payment)}</span>
-                                    ${hasImg ? `<span class="badge-receipt" onclick="viewReceipt('${item.id}', 'active')">${UI_SVGS.cameraSmall} Receipt</span>` : ''}
+                                    ${hasImg ? `<span class="badge-receipt" onclick="event.stopPropagation(); viewReceipt('${item.id}', 'active')">${UI_SVGS.cameraSmall} Receipt</span>` : ''}
                                 </div>
                                 ${item.note ? `<div class="exp-note">${escapeHtml(item.note)}</div>` : ''}
                             </div>
@@ -4192,13 +4484,13 @@
                         <div class="exp-right">
                             <div class="exp-amount">${formatMoney(item.amount)}</div>
                             <div class="exp-actions">
-                                <button class="icon-btn" title="Edit" onclick="openExpenseModal('${item.id}')">
+                                <button class="icon-btn" title="Edit" onclick="event.stopPropagation(); openExpenseModal('${item.id}')">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
                                         <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
                                     </svg>
                                 </button>
-                                <button class="icon-btn del" title="Delete" onclick="deleteExpense('${item.id}')">
+                                <button class="icon-btn del" title="Delete" onclick="event.stopPropagation(); deleteExpense('${item.id}')">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <polyline points="3 6 5 6 21 6"/>
                                         <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6m5 0V4a1 1 0 011-1h2a1 1 0 011 1v2"/>
@@ -4247,15 +4539,15 @@
                                 <span style="font-size:11px; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Recorded Items</span>
                                 <button class="text-action" onclick="exportCSV('${arc.id}')">Export Cycle CSV</button>
                             </div>
-                            ${arc.items.map(item => {
+                                                        ${arc.items.map(item => {
                                 const hasImg = Boolean(item.hasReceipt || item.receipt || receiptCache[item.id]);
                                 return `
-                                    <div class="history-mini-item">
+                                    <div class="history-mini-item" onclick="openExpenseDetail('${item.id}', '${arc.id}')">
                                         <div>
                                             <div class="mini-item-title-row">
                                                 <span class="mini-item-icon">${getCategorySvg(item.category, 14)}</span>
                                                 <span>${escapeHtml(item.title)}</span>
-                                                ${hasImg ? `<span class="badge-receipt" onclick="viewReceipt('${item.id}', '${arc.id}')">${UI_SVGS.cameraSmall} Receipt</span>` : ''}
+                                                ${hasImg ? `<span class="badge-receipt" onclick="event.stopPropagation(); viewReceipt('${item.id}', '${arc.id}')">${UI_SVGS.cameraSmall} Receipt</span>` : ''}
                                             </div>
                                             <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">
                                                 ${item.date} • ${escapeHtml(item.category)} • ${escapeHtml(item.payment)}
@@ -5185,6 +5477,113 @@
             return null;
         }
 
+                let currentDetailRequestId = 0;
+
+        async function openExpenseDetail(itemId, sourceId = 'active') {
+            const isActive = sourceId === 'active';
+            let item = null;
+            let cycleName = state.activeCycleLabel || 'Current Cycle';
+
+            if (isActive) {
+                item = state.activeExpenses.find(e => e.id === itemId);
+            } else {
+                const arc = state.history.find(h => h.id === sourceId);
+                if (arc) {
+                    item = (arc.items || []).find(e => e.id === itemId);
+                    cycleName = arc.label || 'Archived Cycle';
+                }
+            }
+            if (!item) return;
+
+            const requestId = ++currentDetailRequestId;
+
+            document.getElementById('detailCatIcon').innerHTML = getCategorySvg(item.category, 21);
+            document.getElementById('detailMerchant').innerText = item.title || 'Untitled Expense';
+
+            const fullDateStr = item.date
+                ? parseLocalDate(item.date).toLocaleDateString('en-US', {
+                      weekday: 'long',
+                      month: 'long',
+                      day: 'numeric',
+                      year: 'numeric'
+                  })
+                : '';
+            document.getElementById('detailFullDate').innerText = fullDateStr;
+            document.getElementById('detailAmount').innerText = formatMoney(item.amount);
+
+            const statusPill = document.getElementById('detailStatusPill');
+            statusPill.innerText = isActive ? 'Active Trail' : 'Archived';
+            statusPill.classList.toggle('archived', !isActive);
+
+            document.getElementById('detailCategory').innerText = item.category || 'Other';
+            document.getElementById('detailPayment').innerText = item.payment || '—';
+            document.getElementById('detailCycle').innerText = cycleName;
+
+            const timeLoggedStr = item.createdAt
+                ? new Date(item.createdAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+                : '—';
+            document.getElementById('detailTimeLogged').innerText = timeLoggedStr;
+
+            // Full Note
+            const noteBox = document.getElementById('detailNoteBox');
+            const noteText = document.getElementById('detailNoteText');
+            if (item.note && item.note.trim()) {
+                noteText.innerText = item.note.trim();
+                noteBox.style.display = 'block';
+            } else {
+                noteBox.style.display = 'none';
+            }
+
+            // Bottom Action Bar (Active entries only)
+            const actionBar = document.getElementById('detailActionBar');
+            if (isActive) {
+                actionBar.style.display = 'grid';
+                document.getElementById('detailEditBtn').onclick = () => {
+                    closeModal('expenseDetailModal');
+                    openExpenseModal(item.id);
+                };
+                document.getElementById('detailDeleteBtn').onclick = () => {
+                    closeModal('expenseDetailModal');
+                    deleteExpense(item.id);
+                };
+            } else {
+                actionBar.style.display = 'none';
+            }
+
+            // Embedded Receipt Preview
+            const receiptBox = document.getElementById('detailReceiptBox');
+            const receiptLoading = document.getElementById('detailReceiptLoading');
+            const receiptFrame = document.getElementById('detailReceiptFrame');
+            const receiptImg = document.getElementById('detailReceiptImg');
+            const receiptError = document.getElementById('detailReceiptError');
+
+            const hasImg = Boolean(item.hasReceipt || item.receipt || receiptCache[item.id]);
+            if (hasImg) {
+                receiptBox.style.display = 'block';
+                receiptLoading.style.display = 'block';
+                receiptFrame.style.display = 'none';
+                receiptError.style.display = 'none';
+            } else {
+                receiptBox.style.display = 'none';
+            }
+
+            document.getElementById('expenseDetailModal').classList.add('open');
+
+            if (hasImg) {
+                const dataUrl = await fetchReceiptDataUrl(item.id, item.receipt);
+                if (requestId !== currentDetailRequestId) return;
+
+                receiptLoading.style.display = 'none';
+                if (dataUrl) {
+                    receiptImg.src = dataUrl;
+                    receiptFrame.style.display = 'block';
+                    receiptFrame.onclick = () => viewReceipt(item.id, sourceId);
+                } else {
+                    receiptError.style.display = 'block';
+                }
+            }
+        }
+
         async function viewReceipt(itemId, sourceId) {
             let item = null;
             if (sourceId === 'active') {
@@ -5410,6 +5809,7 @@
             clearReceiptImage,
             saveExpense,
             deleteExpense,
+            openExpenseDetail,
             viewReceipt,
             switchAuthTab,
             handleEmailAuth,
